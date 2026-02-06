@@ -19,5 +19,13 @@ public partial class Person
 
     public virtual ICollection<Account> Accounts { get; set; } = new List<Account>();
 
+    public virtual ICollection<Billing> Billings { get; set; } = new List<Billing>();
+
     public virtual TypeDocument IdTypeDocumentNavigation { get; set; } = null!;
+
+    public virtual ICollection<Notification> Notifications { get; set; } = new List<Notification>();
+
+    public virtual ICollection<RouteAssignment> RouteAssignments { get; set; } = new List<RouteAssignment>();
+
+    public virtual ICollection<Vehicle> Vehicles { get; set; } = new List<Vehicle>();
 }

@@ -1,0 +1,19 @@
+﻿using System;
+using System.Collections.Generic;
+
+namespace Persistence;
+
+public partial class Place
+{
+    public int IdPlace { get; set; }
+
+    public string Name { get; set; } = null!;
+
+    public string Description { get; set; } = null!;
+
+    public virtual ICollection<QueueVehicle> QueueVehicles { get; set; } = new List<QueueVehicle>();
+
+    public virtual ICollection<TravelRoute> TravelRouteIdPlaceANavigations { get; set; } = new List<TravelRoute>();
+
+    public virtual ICollection<TravelRoute> TravelRouteIdPlaceBNavigations { get; set; } = new List<TravelRoute>();
+}
