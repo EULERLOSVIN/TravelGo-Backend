@@ -15,6 +15,8 @@ public partial class Account
 
     public string Password { get; set; } = null!;
 
+    public virtual ICollection<Assignment> Assignments { get; set; } = new List<Assignment>();
+
     public virtual Person IdPersonNavigation { get; set; } = null!;
 
     public virtual Role IdRoleNavigation { get; set; } = null!;
