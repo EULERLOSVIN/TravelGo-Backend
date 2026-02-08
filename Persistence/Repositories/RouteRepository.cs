@@ -6,7 +6,7 @@ namespace Persistence.Repositories
 {
     internal class RouteRepository
     {
-        public int IdRoute { get; set; }
+        public int IdRoute { get; set; } // Primary Key
 
         public string Origin { get; set; } = null!;
 
