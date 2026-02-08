@@ -23,6 +23,9 @@ builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Regis
 // 3. Inyección de Dependencias (Repositorios)
 builder.Services.AddScoped<IRegisterUserRepository, RegisterUserRepository>();
 builder.Services.AddScoped<ILoginRepository, LoginRepository>();
+builder.Services.AddScoped<IGetPersonnelRepository, GetPersonnelRepository>();
+builder.Services.AddScoped<IGetAllRolesRepository, GetAllRolesRepositoy>();
+builder.Services.AddScoped<IGetTypesDocumentsRepository, GetTypesDocumentsRepository>();
 
 // 4. Conexión a SQL Server en AWS RDS
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
