@@ -4,5 +4,6 @@
     {
         public List<RoleOfUserDto> Roles { get; set; } = new();
         public List<TypeDocumentDto> DocumentTypes { get; set; } = new();
+        public List<StateOfAccountDto> StateOfAccount { get; set; } = new();
     }
 }

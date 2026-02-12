@@ -50,6 +50,8 @@ public partial class ApplicationDbContext : DbContext
 
     public virtual DbSet<SeatVehicle> SeatVehicles { get; set; }
 
+    public virtual DbSet<StateAccount> StateAccounts { get; set; }
+
     public virtual DbSet<StateHeadquarter> StateHeadquarters { get; set; }
 
     public virtual DbSet<StateSeatVehicle> StateSeatVehicles { get; set; }
@@ -70,7 +72,10 @@ public partial class ApplicationDbContext : DbContext
 
     public virtual DbSet<VehicleState> VehicleStates { get; set; }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) { }
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
+        => optionsBuilder.UseSqlServer("Server=servidor-sql.ccjikiaksg0w.us-east-1.rds.amazonaws.com;Database=DbTravelGo;User Id=admin;Password=martinez1234;Encrypt=True;TrustServerCertificate=True;");
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Account>(entity =>
@@ -85,6 +90,9 @@ public partial class ApplicationDbContext : DbContext
                 .HasColumnName("email");
             entity.Property(e => e.IdPerson).HasColumnName("idPerson");
             entity.Property(e => e.IdRole).HasColumnName("idRole");
+            entity.Property(e => e.IdStateAccount)
+                .HasDefaultValue(1)
+                .HasColumnName("idStateAccount");
             entity.Property(e => e.Password)
                 .HasMaxLength(60)
                 .HasColumnName("password");
@@ -98,6 +106,11 @@ public partial class ApplicationDbContext : DbContext
                 .HasForeignKey(d => d.IdRole)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Account_Role");
+
+            entity.HasOne(d => d.IdStateAccountNavigation).WithMany(p => p.Accounts)
+                .HasForeignKey(d => d.IdStateAccount)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Account_StateAccount");
         });
 
         modelBuilder.Entity<Assignment>(entity =>
@@ -473,6 +486,18 @@ public partial class ApplicationDbContext : DbContext
                 .HasForeignKey(d => d.IdVehicle)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_SeatVehicle_Vehicle");
+        });
+
+        modelBuilder.Entity<StateAccount>(entity =>
+        {
+            entity.HasKey(e => e.IdStateAccount).HasName("PK__StateAcc__D19B468F2C2B2DEB");
+
+            entity.ToTable("StateAccount");
+
+            entity.Property(e => e.IdStateAccount).HasColumnName("idStateAccount");
+            entity.Property(e => e.Name)
+                .HasMaxLength(50)
+                .HasColumnName("name");
         });
 
         modelBuilder.Entity<StateHeadquarter>(entity =>

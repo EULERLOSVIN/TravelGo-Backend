@@ -5,7 +5,7 @@ using Persistence.Context;
 
 namespace Persistence.Repositories
 {
-    public class GetTypesDocumentsRepository: IGetTypesDocumentsRepository
+    public class GetTypesDocumentsRepository : IGetTypesDocumentsRepository
     {
         private ApplicationDbContext _context;
         public GetTypesDocumentsRepository(ApplicationDbContext context)
