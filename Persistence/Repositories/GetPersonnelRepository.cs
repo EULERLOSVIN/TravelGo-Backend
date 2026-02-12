@@ -16,20 +16,23 @@ namespace Persistence.Repositories
 
         public async Task<List<PersonnelDto>> GetPersonnelByFilters(FilterPersonnelDto filters)
         {
+            const int pageSize = 10;
             int pageNumber = filters.PageNumber ?? 1;
-            int pageSize = 10;
-
-            var query = _context.Accounts.AsQueryable();
+            if (pageNumber < 1) pageNumber = 1;
+            var query = _context.Accounts
+                .AsNoTracking()
+                .AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(filters.SearchTerm))
             {
+                var term = filters.SearchTerm.Trim();
                 query = query.Where(c =>
-                    c.IdPersonNavigation.FirstName.Contains(filters.SearchTerm) ||
-                    c.IdPersonNavigation.LastName.Contains(filters.SearchTerm) ||
-                    c.IdPersonNavigation.NumberIdentityDocument.Contains(filters.SearchTerm));
+                    c.IdPersonNavigation.FirstName.Contains(term) ||
+                    c.IdPersonNavigation.LastName.Contains(term) ||
+                    c.IdPersonNavigation.NumberIdentityDocument.Contains(term));
             }
 
-            var listPersonnel = await query
+            return await query
                 .OrderBy(c => c.IdPersonNavigation.LastName)
                 .Skip((pageNumber - 1) * pageSize)
                 .Take(pageSize)
@@ -43,14 +46,9 @@ namespace Persistence.Repositories
                     PhoneNumber = c.IdPersonNavigation.PhoneNumber,
                     Email = c.Email,
                     State = c.IdStateAccountNavigation.Name,
-                    TypeDocument = c.IdPersonNavigation.IdTypeDocumentNavigation.Name   
+                    TypeDocument = c.IdPersonNavigation.IdTypeDocumentNavigation.Name
                 })
                 .ToListAsync();
-
-            return listPersonnel;
         }
-
-
-
     }
 }

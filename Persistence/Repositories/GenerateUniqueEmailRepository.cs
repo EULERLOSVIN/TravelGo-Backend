@@ -39,21 +39,17 @@ namespace Persistence.Repositories
         {
             if (string.IsNullOrWhiteSpace(text)) return text;
 
-            // Normalizamos a FormD (separa la letra de la tilde)
             string normalizedString = text.Normalize(NormalizationForm.FormD);
             StringBuilder stringBuilder = new StringBuilder();
 
             foreach (char c in normalizedString)
             {
-                // Solo conservamos caracteres que no sean marcas de acentuación
                 UnicodeCategory unicodeCategory = CharUnicodeInfo.GetUnicodeCategory(c);
                 if (unicodeCategory != UnicodeCategory.NonSpacingMark)
                 {
                     stringBuilder.Append(c);
                 }
             }
-
-            // Retornamos a FormC (composición normal)
             return stringBuilder.ToString().Normalize(NormalizationForm.FormC);
         }
     }

@@ -22,7 +22,6 @@ namespace Persistence.Repositories
             }
             catch (Exception)
             {
-                // Probablemente restricción de llave foránea (la ruta tiene tickets o asignaciones)
                 return false; 
             }
         }
