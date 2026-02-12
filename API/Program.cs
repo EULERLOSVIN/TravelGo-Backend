@@ -1,4 +1,4 @@
-using Application.Features.Authentication.Commands;
+锘縰sing Application.Features.Authentication.Commands;
 using Application.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Persistence.Context;
@@ -6,7 +6,7 @@ using Persistence.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// 1. Configuraci髇 de CORS (Fundamental para Angular)
+// 1. Configuraci贸n de CORS (Fundamental para Angular)
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("TravelGoPolicy", policy =>
@@ -20,14 +20,18 @@ builder.Services.AddCors(options =>
 // 2. Registro de MediatR (Capa de Application)
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(RegisterUserHandler).Assembly));
 
-// 3. Inyecci髇 de Dependencias (Repositorios)
+// 3. Inyecci贸n de Dependencias (Repositorios)
 builder.Services.AddScoped<IRegisterUserRepository, RegisterUserRepository>();
 builder.Services.AddScoped<ILoginRepository, LoginRepository>();
 builder.Services.AddScoped<IGetPersonnelRepository, GetPersonnelRepository>();
 builder.Services.AddScoped<IGetAllRolesRepository, GetAllRolesRepositoy>();
 builder.Services.AddScoped<IGetTypesDocumentsRepository, GetTypesDocumentsRepository>();
+builder.Services.AddScoped<IAddTravelRouteRepository, AddTravelRouteRepository>();
+builder.Services.AddScoped<IGetAllTravelRoutesRepository, GetAllTravelRoutesRepository>();
+builder.Services.AddScoped<IUpdateTravelRouteRepository, UpdateTravelRouteRepository>();
+builder.Services.AddScoped<IDeleteTravelRouteRepository, DeleteTravelRouteRepository>();
 
-// 4. Conexi髇 a SQL Server en AWS RDS
+// 4. Conexi贸n a SQL Server en AWS RDS
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
@@ -37,14 +41,14 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// 5. Configuraci髇 del Pipeline de HTTP
+// 5. Configuraci贸n del Pipeline de HTTP
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
-// 6. Habilitar CORS (Debe ir antes de la Autorizaci髇)
+// 6. Habilitar CORS (Debe ir antes de la Autorizaci贸n)
 app.UseCors("TravelGoPolicy");
 
 app.UseHttpsRedirection();
@@ -52,3 +56,4 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
