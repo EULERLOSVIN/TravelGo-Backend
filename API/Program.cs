@@ -30,6 +30,12 @@ builder.Services.AddScoped<IAddTravelRouteRepository, AddTravelRouteRepository>(
 builder.Services.AddScoped<IGetAllTravelRoutesRepository, GetAllTravelRoutesRepository>();
 builder.Services.AddScoped<IUpdateTravelRouteRepository, UpdateTravelRouteRepository>();
 builder.Services.AddScoped<IDeleteTravelRouteRepository, DeleteTravelRouteRepository>();
+builder.Services.AddScoped<IGetPersonnelStatisticsRepository, GetPersonnelStatisticsRepository>();
+builder.Services.AddScoped<IGetStatesAccountRepository, GetStatesAccountRepository>();
+builder.Services.AddScoped<IGetUserRepository, GetUserRepository>();
+builder.Services.AddScoped<IEditUserRepository, EditUserRepository>();
+builder.Services.AddScoped<GenerateUniqueEmailRepository>();
+builder.Services.AddScoped<IDeleteUserRepository, DeleteUserRepository>(); //
 
 // 4. Conexión a SQL Server en AWS RDS
 builder.Services.AddDbContext<ApplicationDbContext>(options =>

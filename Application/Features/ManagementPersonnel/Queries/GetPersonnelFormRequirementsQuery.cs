@@ -12,10 +12,12 @@ namespace Application.Features.ManagementPersonnel.Queries
     {
         private readonly IGetAllRolesRepository _rolesRepository;
         private readonly IGetTypesDocumentsRepository _tipesDocumentsRepository;
-        public GetPersonnelFormRequirementsHandler(IGetAllRolesRepository rolesRepository, IGetTypesDocumentsRepository tipesDocumentsRepository)
+        private readonly IGetStatesAccountRepository _statesAccountsRepository;
+        public GetPersonnelFormRequirementsHandler(IGetAllRolesRepository rolesRepository, IGetTypesDocumentsRepository tipesDocumentsRepository, IGetStatesAccountRepository statesAccountsRepository)
         {
             _rolesRepository = rolesRepository;
             _tipesDocumentsRepository = tipesDocumentsRepository;
+            _statesAccountsRepository = statesAccountsRepository;
         }
 
         public async Task<PersonnelFormRequirementsDto> Handle(GetPersonnelFormRequirementsQuery request, CancellationToken cancellationToken)
@@ -23,7 +25,8 @@ namespace Application.Features.ManagementPersonnel.Queries
             return new PersonnelFormRequirementsDto()
             {
                 Roles = await _rolesRepository.GetAllRoles(),
-                DocumentTypes = await _tipesDocumentsRepository.GetTypesDocuments()
+                DocumentTypes = await _tipesDocumentsRepository.GetTypesDocuments(),
+                StateOfAccount = await _statesAccountsRepository.GetStatesAccount()
             };
         }
     }

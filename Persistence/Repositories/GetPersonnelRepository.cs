@@ -5,7 +5,7 @@ using Persistence.Context;
 
 namespace Persistence.Repositories
 {
-    public class GetPersonnelRepository: IGetPersonnelRepository
+    public class GetPersonnelRepository : IGetPersonnelRepository
     {
         private readonly ApplicationDbContext _context;
 
@@ -17,7 +17,7 @@ namespace Persistence.Repositories
         public async Task<List<PersonnelDto>> GetPersonnelByFilters(FilterPersonnelDto filters)
         {
             int pageNumber = filters.PageNumber ?? 1;
-            int pageSize = 15;
+            int pageSize = 10;
 
             var query = _context.Accounts.AsQueryable();
 
@@ -41,7 +41,9 @@ namespace Persistence.Repositories
                     Role = c.IdRoleNavigation.Name,
                     Dni = c.IdPersonNavigation.NumberIdentityDocument,
                     PhoneNumber = c.IdPersonNavigation.PhoneNumber,
-                    Email = c.Email
+                    Email = c.Email,
+                    State = c.IdStateAccountNavigation.Name,
+                    TypeDocument = c.IdPersonNavigation.IdTypeDocumentNavigation.Name   
                 })
                 .ToListAsync();
 

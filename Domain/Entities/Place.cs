@@ -9,7 +9,7 @@ public partial class Place
 
     public string Name { get; set; } = null!;
 
-    public string Description { get; set; } = null!;
+    public string? Description { get; set; }
 
     public virtual ICollection<QueueVehicle> QueueVehicles { get; set; } = new List<QueueVehicle>();
 
