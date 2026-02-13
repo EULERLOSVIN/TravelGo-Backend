@@ -35,7 +35,13 @@ builder.Services.AddScoped<IGetStatesAccountRepository, GetStatesAccountReposito
 builder.Services.AddScoped<IGetUserRepository, GetUserRepository>();
 builder.Services.AddScoped<IEditUserRepository, EditUserRepository>();
 builder.Services.AddScoped<GenerateUniqueEmailRepository>();
-builder.Services.AddScoped<IDeleteUserRepository, DeleteUserRepository>(); //
+builder.Services.AddScoped<IDeleteUserRepository, DeleteUserRepository>(); 
+
+// Lugares (Places)
+builder.Services.AddScoped<IAddPlaceRepository, AddPlaceRepository>();
+builder.Services.AddScoped<IGetAllPlacesRepository, GetAllPlacesRepository>();
+builder.Services.AddScoped<IUpdatePlaceRepository, UpdatePlaceRepository>();
+builder.Services.AddScoped<IDeletePlaceRepository, DeletePlaceRepository>();
 
 // 4. Conexión a SQL Server en AWS RDS
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
