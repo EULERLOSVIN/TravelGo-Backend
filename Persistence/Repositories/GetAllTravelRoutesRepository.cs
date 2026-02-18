@@ -1,4 +1,4 @@
-// rutas=darwin  Este código va a la base de datos, saca todas las rutas y las convierte en DTOs para enviarlas.
+
 using Application.DTOs;
 using Application.Interfaces;
 using Microsoft.EntityFrameworkCore;

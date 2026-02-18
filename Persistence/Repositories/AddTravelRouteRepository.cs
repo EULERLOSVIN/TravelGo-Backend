@@ -10,15 +10,13 @@ namespace Persistence.Repositories
         private readonly ApplicationDbContext _context;
         public AddTravelRouteRepository(ApplicationDbContext context) => _context = context;
 
-// rutas=darwin
+
         public async Task<int> AddTravelRoute(AddTravelRouteDto dto)
         {
-            // Parsear "Origen - Destino" del nombre
             var parts = dto.nameRoute.Split('-');
             string originName = parts.Length > 0 ? parts[0].Trim() : "Origen Desconocido";
             string destinationName = parts.Length > 1 ? parts[1].Trim() : "Destino Desconocido";
 
-            // Buscar o crear Place A (Origen)
             var placeA = await _context.Places.FirstOrDefaultAsync(p => p.Name == originName);
             if (placeA == null)
             {
@@ -27,7 +25,6 @@ namespace Persistence.Repositories
                 await _context.SaveChangesAsync();
             }
 
-            // Buscar o crear Place B (Destino)
             var placeB = await _context.Places.FirstOrDefaultAsync(p => p.Name == destinationName);
             if (placeB == null)
             {
