@@ -13,29 +13,22 @@ namespace Persistence.Repositories
 
         public async Task<int> AddTravelRoute(AddTravelRouteDto dto)
         {
-            var parts = dto.nameRoute.Split('-');
-            string originName = parts.Length > 0 ? parts[0].Trim() : "Origen Desconocido";
-            string destinationName = parts.Length > 1 ? parts[1].Trim() : "Destino Desconocido";
-
-            var placeA = await _context.Places.FirstOrDefaultAsync(p => p.Name == originName);
-            if (placeA == null)
+            if (dto.idPlaceA == dto.idPlaceB)
             {
-                placeA = new Place { Name = originName, Description = "Creado automáticamente" };
-                _context.Places.Add(placeA);
-                await _context.SaveChangesAsync();
+                throw new Exception("El origen y el destino no pueden ser el mismo lugar.");
             }
 
-            var placeB = await _context.Places.FirstOrDefaultAsync(p => p.Name == destinationName);
-            if (placeB == null)
-            {
-                placeB = new Place { Name = destinationName, Description = "Creado automáticamente" };
-                _context.Places.Add(placeB);
-                await _context.SaveChangesAsync();
-            }
+            // Buscar Place A (Origen)
+            var placeA = await _context.Places.FindAsync(dto.idPlaceA);
+            if (placeA == null) throw new Exception("El lugar de origen no existe");
+
+            // Buscar Place B (Destino) 
+            var placeB = await _context.Places.FindAsync(dto.idPlaceB);
+            if (placeB == null) throw new Exception("El lugar de destino no existe");
 
             var route = new TravelRoute
             {
-                NameRoute = dto.nameRoute,
+                NameRoute = $"{placeA.Name} - {placeB.Name}",
                 Price = dto.price,
                 IdPlaceA = placeA.IdPlace,
                 IdPlaceB = placeB.IdPlace
