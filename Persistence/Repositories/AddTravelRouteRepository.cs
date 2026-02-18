@@ -10,7 +10,7 @@ namespace Persistence.Repositories
         private readonly ApplicationDbContext _context;
         public AddTravelRouteRepository(ApplicationDbContext context) => _context = context;
 
-// rutas=darwin
+
         public async Task<int> AddTravelRoute(AddTravelRouteDto dto)
         {
             if (dto.idPlaceA == dto.idPlaceB)

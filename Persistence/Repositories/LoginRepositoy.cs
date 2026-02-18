@@ -26,9 +26,12 @@ namespace Persistence.Repositories
             var account = await _context.Accounts
                 .Include(a => a.IdPersonNavigation)
                 .Include(a => a.IdRoleNavigation)
+                .Include(a => a.IdStateAccountNavigation)
                 .FirstOrDefaultAsync(x => x.Email == loginRequestDto.Email);
 
             if (account == null) return null;
+
+            if (account.IdStateAccountNavigation?.Name != "Activo") return null;
 
             bool isValid = BCrypt.Net.BCrypt.Verify(loginRequestDto.Password, account.Password);
             if (!isValid) return null;

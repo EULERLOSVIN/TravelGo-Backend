@@ -72,10 +72,7 @@ public partial class ApplicationDbContext : DbContext
 
     public virtual DbSet<VehicleState> VehicleStates { get; set; }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("Server=servidor-sql.ccjikiaksg0w.us-east-1.rds.amazonaws.com;Database=DbTravelGo;User Id=admin;Password=martinez1234;Encrypt=True;TrustServerCertificate=True;");
-
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) { }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Account>(entity =>

@@ -6,7 +6,7 @@ namespace Application.Interfaces
 {
     public interface IRegisterUserRepository
     {
-        Task<int> RegisterUser(RegisterUserDto registerUserDto);
+        Task<bool> RegisterUser(RegisterUserDto registerUserDto);
     }
 }
 

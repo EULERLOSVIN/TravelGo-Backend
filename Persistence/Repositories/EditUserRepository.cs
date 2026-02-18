@@ -1,19 +1,17 @@
 ﻿using Application.DTOs;
 using Application.Interfaces;
+using Application.Interfaces.ManagementUser;
 using Microsoft.EntityFrameworkCore;
 using Persistence.Context;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Persistence.Repositories
 {
     public class EditUserRepository: IEditUserRepository
     {
         public readonly ApplicationDbContext _context;
-        private readonly GenerateUniqueEmailRepository _generateUniqueEmailRepository;
+        private readonly IGenerateUniqueEmailRepository _generateUniqueEmailRepository;
 
-        public EditUserRepository(ApplicationDbContext context , GenerateUniqueEmailRepository generateUniqueEmailRepository)
+        public EditUserRepository(ApplicationDbContext context , IGenerateUniqueEmailRepository generateUniqueEmailRepository)
         {
             _context = context;
             _generateUniqueEmailRepository = generateUniqueEmailRepository;
@@ -31,17 +29,19 @@ namespace Persistence.Repositories
             }
 
             var person = account.IdPersonNavigation;
+
+            // 1. Optimización lógica: Solo generar email si realmente hay un cambio de nombre/apellido
             if (person.FirstName != newData.FirstName || person.LastName != newData.LastName)
             {
                 account.Email = await _generateUniqueEmailRepository.GenerateUniqueEmail(newData.FirstName, newData.LastName);
             }
 
+            // Actualización de campos
             person.FirstName = newData.FirstName;
             person.LastName = newData.LastName;
             person.IdTypeDocument = newData.IdTypeDocument;
             person.NumberIdentityDocument = newData.NumberDocument;
             person.PhoneNumber = newData.PhoneNumber;
-
 
             account.IdRole = newData.IdRole;
             account.IdStateAccount = newData.IdStateOfAccount;
@@ -52,11 +52,11 @@ namespace Persistence.Repositories
                 {
                     throw new ArgumentException("La nueva contraseña y la confirmación no coinciden.");
                 }
-
                 account.Password = BCrypt.Net.BCrypt.HashPassword(newData.NewPassword);
             }
 
-            var result = await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
+
             return true;
         }
     }

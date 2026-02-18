@@ -17,10 +17,16 @@ namespace API.Controllers
         }
 
         [HttpPost("register")]
-        public async Task<ActionResult<int>> Register([FromBody] RegisterUserDto registerUserDto)
+        public async Task<IActionResult> Register([FromBody] RegisterUserDto registerUserDto)
         {
-            var userId = await _mediator.Send(new RegisterUserCommand(registerUserDto));
-            return Ok(userId);
+            var result = await _mediator.Send(new RegisterUserCommand(registerUserDto));
+
+            if (result.IsSuccess)
+            {
+                return Ok(result);
+            }
+
+            return BadRequest(result);
         }
 
         [HttpPost("login")]
@@ -28,12 +34,12 @@ namespace API.Controllers
         {
             var result = await _mediator.Send(new LoginQuery(loginDto));
 
-            if (result == null)
+            if (result.IsSuccess)
             {
-                return Unauthorized(new { message = "Correo o contraseña incorrectos" });
+                return Ok(result);
             }
 
-            return Ok(result);
+            return BadRequest(result);
         }
     }
 

@@ -1,4 +1,4 @@
-// rutas=darwin Expone las URLs /api/TravelRoute/add y /api/TravelRoute/getAll.
+
 using Application.DTOs;
 using Application.Features.TravelRoutes.Commands;
 using Application.Features.TravelRoutes.Queries;
@@ -42,6 +42,17 @@ namespace API.Controllers
             var result = await _mediator.Send(new DeleteTravelRouteCommand(id));
             if (!result) return NotFound();
             return Ok(result);
+        }
+
+        [HttpGet("getPlacesOfRoutes")]
+        public async Task<IActionResult> GetPlacesOfRoutes()
+        {
+            var result = await _mediator.Send(new GetAllPlaceOfRouteQuery());
+            if (result.IsSuccess)
+            {
+                return Ok(result);
+            }
+           return BadRequest(result);
         }
     }
 }

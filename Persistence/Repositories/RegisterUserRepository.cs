@@ -1,27 +1,34 @@
 ﻿using Application.DTOs;
 using Application.Interfaces;
+using Application.Interfaces.ManagementUser;
 using Microsoft.EntityFrameworkCore;
 using Persistence.Context;
-using System.Globalization;
-using System.Text;
 
 namespace Persistence.Repositories
 {
     public class RegisterUserRepository : IRegisterUserRepository
     {
         private readonly ApplicationDbContext _context;
-        private readonly GenerateUniqueEmailRepository _generateUniqueEmailRepository;
+        private readonly IGenerateUniqueEmailRepository _generateUniqueEmailRepository;
 
-        public RegisterUserRepository(ApplicationDbContext context, GenerateUniqueEmailRepository generateUniqueEmailRepository)
+        public RegisterUserRepository(ApplicationDbContext context, IGenerateUniqueEmailRepository generateUniqueEmailRepository)
         {
             _context = context;
             _generateUniqueEmailRepository = generateUniqueEmailRepository;
         }
 
-        public async Task<int> RegisterUser(RegisterUserDto dto)
-        {
-            var transaction = await _context.Database.BeginTransactionAsync();
+        public async Task<bool> RegisterUser(RegisterUserDto dto)
+        {           
+            if (dto == null || string.IsNullOrEmpty(dto.password)) return false;
 
+            bool alreadyExists = await _context.People.AnyAsync(p =>
+            p.NumberIdentityDocument == dto.numberIdentityDocument ||
+            p.PhoneNumber == dto.phoneNumber);
+
+            if (alreadyExists) return false;
+            if(dto.typeDocument == 1 && dto.numberIdentityDocument.Length != 8) return false;
+
+            var transaction = await _context.Database.BeginTransactionAsync();
             try
             {
                 var person = new Person
@@ -51,7 +58,7 @@ namespace Persistence.Repositories
 
                 await transaction.CommitAsync();
 
-                return account.IdAccount;
+                return true;
             }
             catch (Exception)
             {

@@ -1,13 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Application.Interfaces.ManagementUser;
+using Microsoft.EntityFrameworkCore;
 using Persistence.Context;
-using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
 
 namespace Persistence.Repositories
 {
-    public class GenerateUniqueEmailRepository
+    public class GenerateUniqueEmailRepository: IGenerateUniqueEmailRepository
     {
         private readonly ApplicationDbContext _context;
         public GenerateUniqueEmailRepository(ApplicationDbContext context)
