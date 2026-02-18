@@ -33,6 +33,7 @@ namespace Persistence.Repositories
             route.IdPlaceB = dto.idPlaceB;
             route.Price = dto.price;
             route.NameRoute = $"{placeA.Name} - {placeB.Name}";
+            route.IsActive = dto.isActive; // Actualizar estado
 
             _context.TravelRoutes.Update(route);
             await _context.SaveChangesAsync();

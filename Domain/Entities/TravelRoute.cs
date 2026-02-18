@@ -15,6 +15,8 @@ public partial class TravelRoute
 
     public decimal? Price { get; set; }
 
+    public bool IsActive { get; set; } = true;
+
     public virtual Place IdPlaceANavigation { get; set; } = null!;
 
     public virtual Place IdPlaceBNavigation { get; set; } = null!;
