@@ -65,6 +65,16 @@ namespace Persistence.Repositories.Headquarters
 
         public async Task<bool> CreateAsync(CreateHeadquarterDto dto)
         {
+            // 1. Validar que el DTO no sea nulo
+            if (dto == null) return false;
+
+            // 2. Validar que el nombre no esté vacío (Casillas vacias)
+            if (string.IsNullOrWhiteSpace(dto.Name)) return false;
+
+            // 3. Validar que no exista otra sede con el mismo nombre (Duplicados)
+            bool exists = await _context.Headquarters.AnyAsync(x => x.Name == dto.Name);
+            if (exists) return false;
+
             var entity = new Headquarter
             {
                 IdCompany = dto.IdCompany,
