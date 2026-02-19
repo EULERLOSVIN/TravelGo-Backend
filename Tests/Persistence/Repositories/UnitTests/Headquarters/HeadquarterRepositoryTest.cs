@@ -29,11 +29,11 @@ namespace Tests.Persistence.Repositories.UnitTests.Headquarters
         [Fact]
         public async Task CreateAsync_WhenInputDataIsValid_ShouldReturnTrue()
         {
-            // base de datos falsa" (in-memory) vacía.
+            // BD falsa
             using var context = GetInMemoryContext();
             var repository = new HeadquarterRepository(context);
 
-            // Preparamos los datos de la sede que queremos guardar
+            
             var inputData = new CreateHeadquarterDto
             {
                 IdCompany = 1,
