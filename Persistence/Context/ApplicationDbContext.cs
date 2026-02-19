@@ -24,6 +24,8 @@ public partial class ApplicationDbContext : DbContext
 
     public virtual DbSet<Company> Companies { get; set; }
 
+    public virtual DbSet<DepartureTime> DepartureTimes { get; set; }
+
     public virtual DbSet<DetailVehicle> DetailVehicles { get; set; }
 
     public virtual DbSet<DocumentVehicle> DocumentVehicles { get; set; }
@@ -73,6 +75,7 @@ public partial class ApplicationDbContext : DbContext
     public virtual DbSet<VehicleState> VehicleStates { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) { }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Account>(entity =>
@@ -201,6 +204,24 @@ public partial class ApplicationDbContext : DbContext
             entity.Property(e => e.Ruc)
                 .HasMaxLength(20)
                 .HasColumnName("ruc");
+        });
+
+        modelBuilder.Entity<DepartureTime>(entity =>
+        {
+            entity.HasKey(e => e.IdDepartureTime).HasName("PK__Departur__45B7BAA8B434CCC9");
+
+            entity.ToTable("DepartureTime");
+
+            entity.Property(e => e.IdDepartureTime).HasColumnName("idDepartureTime");
+            entity.Property(e => e.Hour)
+                .HasPrecision(0)
+                .HasColumnName("hour");
+            entity.Property(e => e.IdTravelRoute).HasColumnName("idTravelRoute");
+
+            entity.HasOne(d => d.IdTravelRouteNavigation).WithMany(p => p.DepartureTimes)
+                .HasForeignKey(d => d.IdTravelRoute)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_DepartureTime_TraveRoute");
         });
 
         modelBuilder.Entity<DetailVehicle>(entity =>
@@ -554,6 +575,7 @@ public partial class ApplicationDbContext : DbContext
             entity.Property(e => e.IdTravelRoute).HasColumnName("idTravelRoute");
             entity.Property(e => e.IdPlaceA).HasColumnName("idPlaceA");
             entity.Property(e => e.IdPlaceB).HasColumnName("idPlaceB");
+            entity.Property(e => e.IsActive).HasDefaultValue(true);
             entity.Property(e => e.NameRoute)
                 .HasMaxLength(50)
                 .HasColumnName("nameRoute");

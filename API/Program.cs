@@ -1,10 +1,12 @@
 ﻿using Application.Features.Authentication.Commands;
 using Application.Interfaces;
+using Application.Interfaces.Booking;
 using Application.Interfaces.Customers;
 using Application.Interfaces.ManagementUser;
 using Microsoft.EntityFrameworkCore;
 using Persistence.Context;
 using Persistence.Repositories;
+using Persistence.Repositories.Booking;
 using Persistence.Repositories.Customers;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -39,6 +41,7 @@ builder.Services.AddScoped<IGetUserRepository, GetUserRepository>();
 builder.Services.AddScoped<IEditUserRepository, EditUserRepository>();
 builder.Services.AddScoped<IDeleteUserRepository, DeleteUserRepository>(); 
 builder.Services.AddScoped<IGetAllPlaceofRouteRepository, GetAllPlaceofRouteRepository>();
+builder.Services.AddScoped<IBookingRepository, BookingRepository>();
 
 // Lugares (Places)
 builder.Services.AddScoped<IAddPlaceRepository, AddPlaceRepository>();
