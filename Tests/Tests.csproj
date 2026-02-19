@@ -30,6 +30,7 @@
     <Folder Include="Application\" />
     <Folder Include="Persistence\Repositories\UnitTests\ManagementRoutes\" />
     <Folder Include="Persistence\Repositories\UnitTests\ManagementVehicles\" />
+    <Folder Include="Persistence\Repositories\UnitTests\Routes\" />
   </ItemGroup>
 
 </Project>

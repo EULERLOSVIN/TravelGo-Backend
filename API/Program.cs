@@ -1,11 +1,13 @@
 ﻿using Application.Features.Authentication.Commands;
 using Application.Interfaces;
 using Application.Interfaces.Customers;
+using Application.Interfaces.Headquarters;
 using Application.Interfaces.ManagementUser;
 using Microsoft.EntityFrameworkCore;
 using Persistence.Context;
 using Persistence.Repositories;
 using Persistence.Repositories.Customers;
+using Persistence.Repositories.Headquarters;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -46,6 +48,7 @@ builder.Services.AddScoped<IGetAllPlacesRepository, GetAllPlacesRepository>();
 builder.Services.AddScoped<IUpdatePlaceRepository, UpdatePlaceRepository>();
 builder.Services.AddScoped<IDeletePlaceRepository, DeletePlaceRepository>();
 builder.Services.AddScoped<IGenerateUniqueEmailRepository, GenerateUniqueEmailRepository>();
+builder.Services.AddScoped<IHeadquarterRepository, HeadquarterRepository>();
 
 // 4. Conexión a SQL Server en AWS RDS
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
