@@ -53,7 +53,7 @@ namespace Tests.Persistence.Repositories.UnitTests.Authentication
         }
 
         [Fact]
-        public async Task RegisterUserRepository_whenInputDataIsNulo_shouldReturnFalse()
+        public async Task RegisterUserRepository_whenInputDataIsNull_shouldReturnFalse()
         {
             // ARRANGE
             using var context = GetInMemoryContext();

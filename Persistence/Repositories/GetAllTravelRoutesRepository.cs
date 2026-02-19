@@ -20,7 +20,8 @@ namespace Persistence.Repositories
                     nameRoute = r.NameRoute,
                     price = r.Price,
                     idPlaceA = r.IdPlaceA,
-                    idPlaceB = r.IdPlaceB
+                    idPlaceB = r.IdPlaceB,
+                    isActive = r.IsActive
                 })
                 .ToListAsync();
         }
