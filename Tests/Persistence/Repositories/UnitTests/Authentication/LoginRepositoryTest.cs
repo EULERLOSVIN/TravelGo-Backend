@@ -250,11 +250,11 @@ namespace Tests.Persistence.Repositories.UnitTests.Authentication
             context.Accounts.Add(account);
             await context.SaveChangesAsync();
 
-            // Usamos el _configMock que configuramos previamente para el JWT
+            
             var instance = new LoginRepository(context, _configMock.Object);
             var loginDto = new LoginRequestDto { Email = " ", Password = " " };
 
-            // ACT
+          
             var result = await instance.Login(loginDto);
 
             // ASSERT
