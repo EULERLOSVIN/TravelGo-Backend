@@ -11,8 +11,6 @@ public partial class Place
 
     public string? Description { get; set; }
 
-    public virtual ICollection<QueueVehicle> QueueVehicles { get; set; } = new List<QueueVehicle>();
-
     public virtual ICollection<TravelRoute> TravelRouteIdPlaceANavigations { get; set; } = new List<TravelRoute>();
 
     public virtual ICollection<TravelRoute> TravelRouteIdPlaceBNavigations { get; set; } = new List<TravelRoute>();

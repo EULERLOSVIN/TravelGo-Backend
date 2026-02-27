@@ -13,9 +13,11 @@ public partial class Vehicle
 
     public string PlateNumber { get; set; } = null!;
 
-    public int? Model { get; set; }
+    public string? Model { get; set; }
 
     public byte[]? Photo { get; set; }
+
+    public virtual ICollection<AssignQueue> AssignQueues { get; set; } = new List<AssignQueue>();
 
     public virtual ICollection<DetailVehicle> DetailVehicles { get; set; } = new List<DetailVehicle>();
 
@@ -25,7 +27,7 @@ public partial class Vehicle
 
     public virtual VehicleState IdVehicleStateNavigation { get; set; } = null!;
 
-    public virtual ICollection<QueueVehicle> QueueVehicles { get; set; } = new List<QueueVehicle>();
+    public virtual ICollection<SeatVehicle> SeatVehicles { get; set; } = new List<SeatVehicle>();
 
     public virtual ICollection<TravelTicket> TravelTickets { get; set; } = new List<TravelTicket>();
 }

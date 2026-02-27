@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Application.DTOs.Customers;
 
 namespace Application.Interfaces.Booking
 {
@@ -12,5 +9,7 @@ namespace Application.Interfaces.Booking
         Task<bool> ReleaseSeat(int idSeatVehicle);
         Task ReleaseSeatIfPending(int idSeatVehicle);
         Task<bool> UpdatePassengerDetails(int idSeatVehicle, string dni, string fullName, string pickUp);
+        Task<bool> RegisterBooking(RegisterBookingDto dto);
+        Task ValidatePaymentData(RegisterBookingDto dto);
     }
 }

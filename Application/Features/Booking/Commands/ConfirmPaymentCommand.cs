@@ -1,9 +1,6 @@
 ﻿using Application.Common;
 using Application.Interfaces.Booking;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Application.Features.Booking.Commands
 {

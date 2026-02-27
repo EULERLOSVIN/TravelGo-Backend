@@ -4,7 +4,8 @@ namespace Application.DTOs.Customers
 {
     public class SearchTravelRouteDto
     {
-        public int idPlaceOrigin { get; set; }
-        public int idPlaceDestination { get; set; }
+        public int IdPlaceOrigin { get; set; }
+        public int IdPlaceDestination { get; set; }
+        public int DayOption { get; set; }
     }
 }
