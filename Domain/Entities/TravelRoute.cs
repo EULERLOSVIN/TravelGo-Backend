@@ -15,6 +15,10 @@ public partial class TravelRoute
 
     public decimal? Price { get; set; }
 
+    public bool IsActive { get; set; }
+
+    public virtual ICollection<DepartureTime> DepartureTimes { get; set; } = new List<DepartureTime>();
+
     public virtual Place IdPlaceANavigation { get; set; } = null!;
 
     public virtual Place IdPlaceBNavigation { get; set; } = null!;

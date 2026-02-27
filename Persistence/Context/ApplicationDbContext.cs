@@ -18,11 +18,15 @@ public partial class ApplicationDbContext : DbContext
 
     public virtual DbSet<Account> Accounts { get; set; }
 
+    public virtual DbSet<AssignQueue> AssignQueues { get; set; }
+
     public virtual DbSet<Assignment> Assignments { get; set; }
 
     public virtual DbSet<Billing> Billings { get; set; }
 
     public virtual DbSet<Company> Companies { get; set; }
+
+    public virtual DbSet<DepartureTime> DepartureTimes { get; set; }
 
     public virtual DbSet<DetailVehicle> DetailVehicles { get; set; }
 
@@ -108,6 +112,27 @@ public partial class ApplicationDbContext : DbContext
                 .HasForeignKey(d => d.IdStateAccount)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Account_StateAccount");
+        });
+
+        modelBuilder.Entity<AssignQueue>(entity =>
+        {
+            entity.HasKey(e => e.IdAssignQueue).HasName("PK__AssignQu__239C1934B49D7544");
+
+            entity.ToTable("AssignQueue");
+
+            entity.Property(e => e.IdAssignQueue).HasColumnName("idAssignQueue");
+            entity.Property(e => e.IdQueueVehicle).HasColumnName("idQueueVehicle");
+            entity.Property(e => e.IdVehicle).HasColumnName("idVehicle");
+
+            entity.HasOne(d => d.IdQueueVehicleNavigation).WithMany(p => p.AssignQueues)
+                .HasForeignKey(d => d.IdQueueVehicle)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_AssignQueue_QueueVehicle");
+
+            entity.HasOne(d => d.IdVehicleNavigation).WithMany(p => p.AssignQueues)
+                .HasForeignKey(d => d.IdVehicle)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_AssignQueue_Vehicle");
         });
 
         modelBuilder.Entity<Assignment>(entity =>
@@ -201,6 +226,24 @@ public partial class ApplicationDbContext : DbContext
             entity.Property(e => e.Ruc)
                 .HasMaxLength(20)
                 .HasColumnName("ruc");
+        });
+
+        modelBuilder.Entity<DepartureTime>(entity =>
+        {
+            entity.HasKey(e => e.IdDepartureTime).HasName("PK__Departur__45B7BAA8B434CCC9");
+
+            entity.ToTable("DepartureTime");
+
+            entity.Property(e => e.IdDepartureTime).HasColumnName("idDepartureTime");
+            entity.Property(e => e.Hour)
+                .HasPrecision(0)
+                .HasColumnName("hour");
+            entity.Property(e => e.IdTravelRoute).HasColumnName("idTravelRoute");
+
+            entity.HasOne(d => d.IdTravelRouteNavigation).WithMany(p => p.DepartureTimes)
+                .HasForeignKey(d => d.IdTravelRoute)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_DepartureTime_TraveRoute");
         });
 
         modelBuilder.Entity<DetailVehicle>(entity =>
@@ -394,22 +437,7 @@ public partial class ApplicationDbContext : DbContext
             entity.ToTable("QueueVehicle");
 
             entity.Property(e => e.IdQueueVehicle).HasColumnName("idQueueVehicle");
-            entity.Property(e => e.EntryDate)
-                .HasDefaultValueSql("(getdate())")
-                .HasColumnType("datetime")
-                .HasColumnName("entryDate");
-            entity.Property(e => e.IdPlace).HasColumnName("idPlace");
-            entity.Property(e => e.IdVehicle).HasColumnName("idVehicle");
-
-            entity.HasOne(d => d.IdPlaceNavigation).WithMany(p => p.QueueVehicles)
-                .HasForeignKey(d => d.IdPlace)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_QueueVehicle_Place");
-
-            entity.HasOne(d => d.IdVehicleNavigation).WithMany(p => p.QueueVehicles)
-                .HasForeignKey(d => d.IdVehicle)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_QueueVehicle_Vehicle");
+            entity.Property(e => e.Number).HasColumnName("number");
         });
 
         modelBuilder.Entity<Role>(entity =>
@@ -554,6 +582,7 @@ public partial class ApplicationDbContext : DbContext
             entity.Property(e => e.IdTravelRoute).HasColumnName("idTravelRoute");
             entity.Property(e => e.IdPlaceA).HasColumnName("idPlaceA");
             entity.Property(e => e.IdPlaceB).HasColumnName("idPlaceB");
+            entity.Property(e => e.IsActive).HasDefaultValue(true);
             entity.Property(e => e.NameRoute)
                 .HasMaxLength(50)
                 .HasColumnName("nameRoute");
@@ -658,7 +687,9 @@ public partial class ApplicationDbContext : DbContext
             entity.Property(e => e.IdVehicle).HasColumnName("idVehicle");
             entity.Property(e => e.IdPerson).HasColumnName("idPerson");
             entity.Property(e => e.IdVehicleState).HasColumnName("idVehicleState");
-            entity.Property(e => e.Model).HasColumnName("model");
+            entity.Property(e => e.Model)
+                .HasMaxLength(100)
+                .HasColumnName("model");
             entity.Property(e => e.Photo).HasColumnName("photo");
             entity.Property(e => e.PlateNumber)
                 .HasMaxLength(10)

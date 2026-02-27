@@ -2,10 +2,12 @@
 using Application.Interfaces;
 using Application.Interfaces.Customers;
 using Application.Interfaces.ManagementUser;
+using Application.Interfaces.vehicles;
 using Microsoft.EntityFrameworkCore;
 using Persistence.Context;
 using Persistence.Repositories;
 using Persistence.Repositories.Customers;
+using Persistence.Repositories.vehicles;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -39,6 +41,9 @@ builder.Services.AddScoped<IGetUserRepository, GetUserRepository>();
 builder.Services.AddScoped<IEditUserRepository, EditUserRepository>();
 builder.Services.AddScoped<IDeleteUserRepository, DeleteUserRepository>(); 
 builder.Services.AddScoped<IGetAllPlaceofRouteRepository, GetAllPlaceofRouteRepository>();
+//vehicles
+builder.Services.AddScoped<IVehicleRepository, VehicleRepository>();
+builder.Services.AddScoped<IGetAllDriverRepository, GetAllDriverRepository>();
 
 // Lugares (Places)
 builder.Services.AddScoped<IAddPlaceRepository, AddPlaceRepository>();
