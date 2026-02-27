@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using Microsoft.EntityFrameworkCore;
-using Persistence;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace Persistence.Context;
 
@@ -58,8 +55,6 @@ public partial class ApplicationDbContext : DbContext
 
     public virtual DbSet<StateHeadquarter> StateHeadquarters { get; set; }
 
-    public virtual DbSet<StateSeatVehicle> StateSeatVehicles { get; set; }
-
     public virtual DbSet<StateTrip> StateTrips { get; set; }
 
     public virtual DbSet<TicketState> TicketStates { get; set; }
@@ -77,6 +72,7 @@ public partial class ApplicationDbContext : DbContext
     public virtual DbSet<VehicleState> VehicleStates { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) { }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Account>(entity =>
@@ -180,6 +176,9 @@ public partial class ApplicationDbContext : DbContext
             entity.Property(e => e.IdCompany).HasColumnName("idCompany");
             entity.Property(e => e.IdPaymentMethod).HasColumnName("idPaymentMethod");
             entity.Property(e => e.IdPerson).HasColumnName("idPerson");
+            entity.Property(e => e.OperationPayCode)
+                .HasMaxLength(50)
+                .HasColumnName("operationPayCode");
             entity.Property(e => e.TotalAmount)
                 .HasColumnType("decimal(18, 0)")
                 .HasColumnName("totalAmount");
@@ -488,26 +487,23 @@ public partial class ApplicationDbContext : DbContext
 
         modelBuilder.Entity<SeatVehicle>(entity =>
         {
-            entity
-                .HasNoKey()
-                .ToTable("SeatVehicle");
+            entity.HasKey(e => e.IdSeatVehicle).HasName("PK__SeatVehi__D7A52E7BBEFBD957");
 
-            entity.Property(e => e.IdSeat).HasColumnName("idSeat");
+            entity.ToTable("SeatVehicle");
+
             entity.Property(e => e.IdSeatVehicle).HasColumnName("idSeatVehicle");
-            entity.Property(e => e.IdStateSeatVehicle).HasColumnName("idStateSeatVehicle");
+            entity.Property(e => e.IdSeat).HasColumnName("idSeat");
             entity.Property(e => e.IdVehicle).HasColumnName("idVehicle");
+            entity.Property(e => e.StateSeat)
+                .HasDefaultValue(true)
+                .HasColumnName("stateSeat");
 
-            entity.HasOne(d => d.IdSeatNavigation).WithMany()
+            entity.HasOne(d => d.IdSeatNavigation).WithMany(p => p.SeatVehicles)
                 .HasForeignKey(d => d.IdSeat)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_SeatVehicle_Seat");
 
-            entity.HasOne(d => d.IdStateSeatVehicleNavigation).WithMany()
-                .HasForeignKey(d => d.IdStateSeatVehicle)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_SeatVehicle_StateSeatVehicle");
-
-            entity.HasOne(d => d.IdVehicleNavigation).WithMany()
+            entity.HasOne(d => d.IdVehicleNavigation).WithMany(p => p.SeatVehicles)
                 .HasForeignKey(d => d.IdVehicle)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_SeatVehicle_Vehicle");
@@ -532,18 +528,6 @@ public partial class ApplicationDbContext : DbContext
             entity.ToTable("StateHeadquarter");
 
             entity.Property(e => e.IdStateHeadquarter).HasColumnName("idStateHeadquarter");
-            entity.Property(e => e.Name)
-                .HasMaxLength(30)
-                .HasColumnName("name");
-        });
-
-        modelBuilder.Entity<StateSeatVehicle>(entity =>
-        {
-            entity.HasKey(e => e.IdStateSeatVehicle).HasName("PK__StateSea__CB5D4163A9D33BEE");
-
-            entity.ToTable("StateSeatVehicle");
-
-            entity.Property(e => e.IdStateSeatVehicle).HasColumnName("idStateSeatVehicle");
             entity.Property(e => e.Name)
                 .HasMaxLength(30)
                 .HasColumnName("name");
@@ -613,10 +597,10 @@ public partial class ApplicationDbContext : DbContext
             entity.Property(e => e.IdTravelRoute).HasColumnName("idTravelRoute");
             entity.Property(e => e.IdVehicle).HasColumnName("idVehicle");
             entity.Property(e => e.SeatNumber).HasColumnName("seatNumber");
-            entity.Property(e => e.TravelDate)
-                .HasDefaultValueSql("(getdate())")
-                .HasColumnType("datetime")
-                .HasColumnName("travelDate");
+            entity.Property(e => e.TicketCode)
+                .HasMaxLength(50)
+                .HasColumnName("ticketCode");
+            entity.Property(e => e.TravelDate).HasColumnName("travelDate");
 
             entity.HasOne(d => d.IdBillingNavigation).WithMany(p => p.TravelTickets)
                 .HasForeignKey(d => d.IdBilling)

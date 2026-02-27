@@ -27,5 +27,10 @@ public partial class Vehicle
 
     public virtual VehicleState IdVehicleStateNavigation { get; set; } = null!;
 
+<<<<<<< HEAD
+=======
+    public virtual ICollection<SeatVehicle> SeatVehicles { get; set; } = new List<SeatVehicle>();
+
+>>>>>>> develop
     public virtual ICollection<TravelTicket> TravelTickets { get; set; } = new List<TravelTicket>();
 }

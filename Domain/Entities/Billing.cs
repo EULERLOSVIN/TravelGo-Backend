@@ -19,6 +19,8 @@ public partial class Billing
 
     public string DocumentNumber { get; set; } = null!;
 
+    public string? OperationPayCode { get; set; }
+
     public virtual Company IdCompanyNavigation { get; set; } = null!;
 
     public virtual PaymentMethod IdPaymentMethodNavigation { get; set; } = null!;

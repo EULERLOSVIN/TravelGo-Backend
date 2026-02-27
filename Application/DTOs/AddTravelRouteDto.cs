@@ -5,6 +5,8 @@ namespace Application.DTOs
     {
         public decimal? price { get; set; }
         public int idPlaceA { get; set; }
+
         public int idPlaceB { get; set; }
+        public bool isActive { get; set; } = true;
     }
 }

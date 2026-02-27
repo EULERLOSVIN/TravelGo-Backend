@@ -11,11 +11,9 @@ public partial class SeatVehicle
 
     public int IdSeat { get; set; }
 
-    public int IdStateSeatVehicle { get; set; }
+    public bool? StateSeat { get; set; }
 
     public virtual Seat IdSeatNavigation { get; set; } = null!;
-
-    public virtual StateSeatVehicle IdStateSeatVehicleNavigation { get; set; } = null!;
 
     public virtual Vehicle IdVehicleNavigation { get; set; } = null!;
 }

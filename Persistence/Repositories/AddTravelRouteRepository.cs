@@ -13,6 +13,8 @@ namespace Persistence.Repositories
 
         public async Task<int> AddTravelRoute(AddTravelRouteDto dto)
         {
+            if (dto == null) throw new ArgumentNullException(nameof(dto), "El DTO no puede ser nulo");
+
             if (dto.idPlaceA == dto.idPlaceB)
             {
                 throw new Exception("El origen y el destino no pueden ser el mismo lugar.");
@@ -28,10 +30,11 @@ namespace Persistence.Repositories
 
             var route = new TravelRoute
             {
-                NameRoute = $"{placeA.Name} - {placeB.Name}",
+                IdPlaceA = dto.idPlaceA,
+                IdPlaceB = dto.idPlaceB,
                 Price = dto.price,
-                IdPlaceA = placeA.IdPlace,
-                IdPlaceB = placeB.IdPlace
+                NameRoute = $"{placeA.Name} - {placeB.Name}",
+                IsActive = dto.isActive // Mapear estado
             };
 
             _context.TravelRoutes.Add(route);
