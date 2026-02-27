@@ -4,6 +4,7 @@ using Application.Interfaces.Booking;
 using Application.Interfaces.Customers;
 using Application.Interfaces.Headquarters;
 using Application.Interfaces.ManagementUser;
+using Infrastructure.ExternalServices;
 using Microsoft.EntityFrameworkCore;
 using Persistence.Context;
 using Persistence.Repositories;
@@ -44,6 +45,11 @@ builder.Services.AddScoped<IEditUserRepository, EditUserRepository>();
 builder.Services.AddScoped<IDeleteUserRepository, DeleteUserRepository>(); 
 builder.Services.AddScoped<IGetAllPlaceofRouteRepository, GetAllPlaceofRouteRepository>();
 builder.Services.AddScoped<IBookingRepository, BookingRepository>();
+builder.Services.AddScoped<ISearchRouteRepository, SearchRouteRepository>();
+builder.Services.AddScoped<IGetDepartureTimeRepository, GetDepartureTimeRepository>();
+
+//BOOKING
+builder.Services.AddScoped<IGetSeatRepository, GetSeatRepository>();
 
 // Lugares (Places)
 builder.Services.AddScoped<IAddPlaceRepository, AddPlaceRepository>();
@@ -56,6 +62,14 @@ builder.Services.AddScoped<IHeadquarterRepository, HeadquarterRepository>();
 // 4. Conexión a SQL Server en AWS RDS
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddHttpClient<IReniecService, ApisPeruService>(client =>
+{
+    // La URL base que te dieron en el correo
+    client.BaseAddress = new Uri("https://dniruc.apisperu.com/api/v1/");
+
+    // Opcional: Configurar tiempos de espera
+    client.Timeout = TimeSpan.FromSeconds(10);
+});
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();

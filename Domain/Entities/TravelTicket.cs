@@ -17,7 +17,9 @@ public partial class TravelTicket
 
     public int SeatNumber { get; set; }
 
-    public DateTime? TravelDate { get; set; }
+    public DateOnly? TravelDate { get; set; }
+
+    public string TicketCode { get; set; } = null!;
 
     public virtual Billing IdBillingNavigation { get; set; } = null!;
 

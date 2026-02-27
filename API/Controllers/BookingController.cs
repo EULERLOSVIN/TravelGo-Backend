@@ -1,4 +1,5 @@
 ﻿using Application.Features.Booking.Commands;
+using Application.Features.Booking.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,8 +16,6 @@ namespace API.Controllers
             _mediator = mediator;
         }
 
-        // ACCIÓN 1: Seleccionar Asiento (Imagen 3)
-        // Cambia el estado de 'Disponible' a 'Reservado'
         [HttpPost("select-seat")]
         public async Task<IActionResult> SelectSeat([FromBody] SelectSeatCommand command)
         {
@@ -24,8 +23,6 @@ namespace API.Controllers
             return result.IsSuccess ? Ok(result) : BadRequest(result);
         }
 
-        // ACCIÓN 2: Registrar Pasajero (Imagen 4)
-        // Mantiene el estado 'Reservado' pero completa la información
         [HttpPost("passenger-data")]
         public async Task<IActionResult> RegisterPassenger([FromBody] RegisterPassengerCommand command)
         {
@@ -33,13 +30,43 @@ namespace API.Controllers
             return result.IsSuccess ? Ok(result) : BadRequest(result);
         }
 
-        // ACCIÓN 3: Confirmar Pago (Imagen 5)
-        // Transiciona el estado de 'Reservado' a 'Vendido' (Confirmado)
         [HttpPost("confirm-payment")]
         public async Task<IActionResult> ConfirmPayment([FromBody] ConfirmPaymentCommand command)
         {
             var result = await _mediator.Send(command);
             return result.IsSuccess ? Ok(result) : BadRequest(result);
+        }
+
+        [HttpGet("GetSeatByIdOfVehicle/")]
+        public async Task<IActionResult> GetSeatByIdOfVehicle([FromQuery] GetSeatByIdOfVehicleQuery query)
+        {
+            var result = await _mediator.Send(query);
+            if (result.IsSuccess)
+            {
+                return Ok(result);
+            }
+
+            return BadRequest(result);
+        }
+        [HttpGet("GetPersonDataByDni")]
+        public async Task<IActionResult> GetPersonDataByDni([FromQuery] GetPersonDataByDniQuery query)
+        {
+            var result = await _mediator.Send(query);
+            if (result.IsSuccess)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
+        }
+
+        [HttpPost("RegisterBooking")]
+        public async Task<IActionResult> RegisterBooking([FromBody] RegisterBookigCommand command)
+        {
+            var result = await _mediator.Send(command);
+            if (result.IsSuccess) { 
+                return Ok(result);
+            }
+            return BadRequest(result);
         }
     }
 }
