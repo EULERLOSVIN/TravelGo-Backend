@@ -1,5 +1,6 @@
 ﻿using Application.Features.Authentication.Commands;
 using Application.Interfaces;
+using Application.Interfaces.Settings;
 using Application.Interfaces.Booking;
 using Application.Interfaces.Customers;
 using Application.Interfaces.Headquarters;
@@ -11,6 +12,10 @@ using Persistence.Repositories;
 using Persistence.Repositories.Booking;
 using Persistence.Repositories.Customers;
 using Persistence.Repositories.Headquarters;
+using Persistence.Repositories.Settings;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -59,6 +64,10 @@ builder.Services.AddScoped<IDeletePlaceRepository, DeletePlaceRepository>();
 builder.Services.AddScoped<IGenerateUniqueEmailRepository, GenerateUniqueEmailRepository>();
 builder.Services.AddScoped<IHeadquarterRepository, HeadquarterRepository>();
 
+// Settings
+builder.Services.AddScoped<ISettingCompanyRepository, SettingCompanyRepository>();
+builder.Services.AddScoped<IProfileRepository, ProfileRepository>();
+
 // 4. Conexión a SQL Server en AWS RDS
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
@@ -70,6 +79,21 @@ builder.Services.AddHttpClient<IReniecService, ApisPeruService>(client =>
     // Opcional: Configurar tiempos de espera
     client.Timeout = TimeSpan.FromSeconds(10);
 });
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = builder.Configuration["Jwt:Issuer"],
+            ValidAudience = builder.Configuration["Jwt:Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"] ?? string.Empty))
+        };
+    });
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -88,6 +112,7 @@ if (app.Environment.IsDevelopment())
 app.UseCors("TravelGoPolicy");
 
 app.UseHttpsRedirection();
+app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 

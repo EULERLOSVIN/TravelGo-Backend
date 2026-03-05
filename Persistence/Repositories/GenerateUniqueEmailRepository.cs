@@ -13,7 +13,7 @@ namespace Persistence.Repositories
         {
             _context = context;
         }
-        public async Task<string> GenerateUniqueEmail(string firstName, string lastName)
+        public async Task<string> GenerateUniqueEmail(string firstName, string lastName, int? excludeAccountId = null)
         {
             // Limpiamos espacios y quitamos tildes antes de procesar
             string cleanFirstName = RemoveAccents(firstName.Trim().Split(' ')[0].ToLower());
@@ -25,7 +25,7 @@ namespace Persistence.Repositories
 
             int counter = 1;
 
-            while (await _context.Accounts.AnyAsync(a => a.Email == finalEmail))
+            while (await _context.Accounts.AnyAsync(a => a.Email == finalEmail && (!excludeAccountId.HasValue || a.IdAccount != excludeAccountId.Value)))
             {
                 finalEmail = $"{baseEmail}{counter}{domain}";
                 counter++;

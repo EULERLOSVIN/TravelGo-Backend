@@ -33,7 +33,7 @@ namespace Persistence.Repositories
             // 1. Optimización lógica: Solo generar email si realmente hay un cambio de nombre/apellido
             if (person.FirstName != newData.FirstName || person.LastName != newData.LastName)
             {
-                account.Email = await _generateUniqueEmailRepository.GenerateUniqueEmail(newData.FirstName, newData.LastName);
+                account.Email = await _generateUniqueEmailRepository.GenerateUniqueEmail(newData.FirstName, newData.LastName, newData.IdAccount);
             }
 
             // Actualización de campos

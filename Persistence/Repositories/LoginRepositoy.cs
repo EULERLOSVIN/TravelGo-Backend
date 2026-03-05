@@ -40,6 +40,8 @@ namespace Persistence.Repositories
 
             return new LoginResponseDto
             {
+                // Se retorna el IdAccount para que el FrontEnd (ej. Mi Perfil) sepa qué cuenta buscar en la base de datos
+                IdAccount = account.IdAccount,
                 Token = token,
                 Email = account.Email,
                 Rol = account.IdRoleNavigation?.Name ?? "Sin Rol"
