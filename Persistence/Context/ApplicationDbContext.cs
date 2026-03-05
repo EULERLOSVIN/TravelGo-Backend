@@ -1,4 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System;
+using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
+using Persistence;
 
 namespace Persistence.Context;
 
@@ -276,9 +279,6 @@ public partial class ApplicationDbContext : DbContext
             entity.Property(e => e.IdDocumentVehicle).HasColumnName("idDocumentVehicle");
             entity.Property(e => e.ExpirationDate).HasColumnName("expirationDate");
             entity.Property(e => e.IdVehicle).HasColumnName("idVehicle");
-            entity.Property(e => e.NumberSoat)
-                .HasMaxLength(20)
-                .HasColumnName("numberSoat");
 
             entity.HasOne(d => d.IdVehicleNavigation).WithMany(p => p.DocumentVehicles)
                 .HasForeignKey(d => d.IdVehicle)
@@ -637,17 +637,17 @@ public partial class ApplicationDbContext : DbContext
                 .HasColumnType("datetime")
                 .HasColumnName("departureDate");
             entity.Property(e => e.IdStateTrip).HasColumnName("idStateTrip");
-            entity.Property(e => e.IdTravelTicket).HasColumnName("idTravelTicket");
+            entity.Property(e => e.IdVehicle).HasColumnName("idVehicle");
 
             entity.HasOne(d => d.IdStateTripNavigation).WithMany(p => p.Trips)
                 .HasForeignKey(d => d.IdStateTrip)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Trip_StateTrip");
 
-            entity.HasOne(d => d.IdTravelTicketNavigation).WithMany(p => p.Trips)
-                .HasForeignKey(d => d.IdTravelTicket)
+            entity.HasOne(d => d.IdVehicleNavigation).WithMany(p => p.Trips)
+                .HasForeignKey(d => d.IdVehicle)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_Trip_TravelTicket");
+                .HasConstraintName("FK_Trip_Vehicle");
         });
 
         modelBuilder.Entity<TypeDocument>(entity =>

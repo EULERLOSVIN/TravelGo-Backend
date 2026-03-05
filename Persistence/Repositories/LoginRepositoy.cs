@@ -42,7 +42,8 @@ namespace Persistence.Repositories
             {
                 Token = token,
                 Email = account.Email,
-                Rol = account.IdRoleNavigation?.Name ?? "Sin Rol"
+                Rol = account.IdRoleNavigation?.Name ?? "Sin Rol",
+                IdAccount = account.IdAccount
             };
         }
 
