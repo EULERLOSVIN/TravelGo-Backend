@@ -28,6 +28,4 @@ public partial class TravelTicket
     public virtual TravelRoute IdTravelRouteNavigation { get; set; } = null!;
 
     public virtual Vehicle IdVehicleNavigation { get; set; } = null!;
-
-    public virtual ICollection<Trip> Trips { get; set; } = new List<Trip>();
 }

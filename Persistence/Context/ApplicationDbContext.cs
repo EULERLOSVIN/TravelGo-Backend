@@ -639,17 +639,17 @@ public partial class ApplicationDbContext : DbContext
                 .HasColumnType("datetime")
                 .HasColumnName("departureDate");
             entity.Property(e => e.IdStateTrip).HasColumnName("idStateTrip");
-            entity.Property(e => e.IdTravelTicket).HasColumnName("idTravelTicket");
+            entity.Property(e => e.IdVehicle).HasColumnName("idVehicle");
 
             entity.HasOne(d => d.IdStateTripNavigation).WithMany(p => p.Trips)
                 .HasForeignKey(d => d.IdStateTrip)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Trip_StateTrip");
 
-            entity.HasOne(d => d.IdTravelTicketNavigation).WithMany(p => p.Trips)
-                .HasForeignKey(d => d.IdTravelTicket)
+            entity.HasOne(d => d.IdVehicleNavigation).WithMany(p => p.Trips)
+                .HasForeignKey(d => d.IdVehicle)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_Trip_TravelTicket");
+                .HasConstraintName("FK_Trip_Vehicle");
         });
 
         modelBuilder.Entity<TypeDocument>(entity =>

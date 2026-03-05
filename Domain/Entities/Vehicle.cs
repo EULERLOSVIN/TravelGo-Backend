@@ -30,4 +30,6 @@ public partial class Vehicle
     public virtual ICollection<SeatVehicle> SeatVehicles { get; set; } = new List<SeatVehicle>();
 
     public virtual ICollection<TravelTicket> TravelTickets { get; set; } = new List<TravelTicket>();
+
+    public virtual ICollection<Trip> Trips { get; set; } = new List<Trip>();
 }

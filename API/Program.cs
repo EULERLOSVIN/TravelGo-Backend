@@ -2,9 +2,11 @@
 using Application.Interfaces;
 using Application.Interfaces.Booking;
 using Application.Interfaces.Customers;
+using Application.Interfaces.Driver;
 using Application.Interfaces.Headquarters;
 using Application.Interfaces.ManagementUser;
 using Application.Interfaces.vehicles;
+using Application.Interfaces.ManageSales;
 using Infrastructure.ExternalServices;
 using Microsoft.EntityFrameworkCore;
 using Persistence.Context;
@@ -12,7 +14,9 @@ using Persistence.Repositories;
 using Persistence.Repositories.Booking;
 using Persistence.Repositories.Customers;
 using Persistence.Repositories.vehicles;
+using Persistence.Repositories.Driver;
 using Persistence.Repositories.Headquarters;
+using Persistence.Repositories.ManageSales;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -52,10 +56,18 @@ builder.Services.AddScoped<IGetAllDriverRepository, GetAllDriverRepository>();
 builder.Services.AddScoped<IBookingRepository, BookingRepository>();
 builder.Services.AddScoped<ISearchRouteRepository, SearchRouteRepository>();
 builder.Services.AddScoped<IGetDepartureTimeRepository, GetDepartureTimeRepository>();
+builder.Services.AddScoped<IGetSalesRepository, GetSalesRepository>();
+
 
 //BOOKING
 builder.Services.AddScoped<IGetSeatRepository, GetSeatRepository>();
 
+<<<<<<< HEAD
+=======
+//TRIPS
+builder.Services.AddScoped<IStartingOrderRepository, StartingOrderRepository>();
+builder.Services.AddScoped<ITripsRepository, TripsRepository>();
+>>>>>>> Euler
 
 // Lugares (Places)
 builder.Services.AddScoped<IAddPlaceRepository, AddPlaceRepository>();
@@ -64,6 +76,9 @@ builder.Services.AddScoped<IUpdatePlaceRepository, UpdatePlaceRepository>();
 builder.Services.AddScoped<IDeletePlaceRepository, DeletePlaceRepository>();
 builder.Services.AddScoped<IGenerateUniqueEmailRepository, GenerateUniqueEmailRepository>();
 builder.Services.AddScoped<IHeadquarterRepository, HeadquarterRepository>();
+
+//MANAGE SALES
+builder.Services.AddScoped<IGetFilterRepository, GetFilterRepository>();
 
 // 4. Conexión a SQL Server en AWS RDS
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
