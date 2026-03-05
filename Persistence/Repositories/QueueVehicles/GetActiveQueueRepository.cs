@@ -31,10 +31,10 @@ namespace Persistence.Repositories.QueueVehicles
                 {
                     IdAssignQueue = aq.IdAssignQueue,
                     Turn = aq.IdQueueVehicleNavigation.Number,
-                    DriverFullName = aq.IdVehicleNavigation.IdPersonNavigation.Name + " " + aq.IdVehicleNavigation.IdPersonNavigation.Lastname,
-                    DriverDni = aq.IdVehicleNavigation.IdPersonNavigation.Dni,
-                    VehiclePlate = aq.IdVehicleNavigation.LicensePlate, // Ajustar nombre columna placa si LicensePlate no existe
-                    VehicleModel = aq.IdVehicleNavigation.VehicleModel, // Ajustar nombre columna modelo
+                    DriverFullName = aq.IdVehicleNavigation.IdPersonNavigation.FirstName + " " + aq.IdVehicleNavigation.IdPersonNavigation.LastName,
+                    DriverDni = aq.IdVehicleNavigation.IdPersonNavigation.NumberIdentityDocument,
+                    VehiclePlate = aq.IdVehicleNavigation.PlateNumber, // Ajustar nombre columna placa si LicensePlate no existe
+                    VehicleModel = aq.IdVehicleNavigation.Model, // Ajustar nombre columna modelo
                     // Para simplificar, toma la primer ruta asignada activa de la sede.
                     IdRoute = aq.IdVehicleNavigation.IdPersonNavigation.RouteAssignments
                               .Where(ra => ra.IdTravelRouteNavigation.IdPlaceA == idHeadquarter)

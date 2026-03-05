@@ -1,0 +1,307 @@
+﻿
+msbuild.log:14314:   2:
+8>C:\Users\dacha\Docume
+nts\APLICACIONES_WEB\TR
+AVELGO\TravelGo-Backend
+\Persistence\Repositori
+es\LoginRepositoy.cs(48
+,17): error CS1912: 
+Inicialización del 
+miembro 'IdAccount' 
+duplicada [C:\Users\dac
+ha\Documents\APLICACION
+ES_WEB\TRAVELGO\TravelG
+o-Backend\Persistence\P
+ersistence.csproj]
+msbuild.log:14315:   2:
+8>C:\Users\dacha\Docume
+nts\APLICACIONES_WEB\TR
+AVELGO\TravelGo-Backend
+\Persistence\Repositori
+es\QueueVehicles\GetAct
+iveQueueRepository.cs(3
+4,80): error CS1061: 
+"Person" no contiene 
+una definición para 
+"Name" ni un método de 
+extensión accesible 
+"Name" que acepte un 
+primer argumento del 
+tipo "Person" (¿falta 
+alguna directiva using 
+o una referencia de 
+ensamblado?) [C:\Users\
+dacha\Documents\APLICAC
+IONES_WEB\TRAVELGO\Trav
+elGo-Backend\Persistenc
+e\Persistence.csproj]
+msbuild.log:14316:   2:
+8>C:\Users\dacha\Docume
+nts\APLICACIONES_WEB\TR
+AVELGO\TravelGo-Backend
+\Persistence\Repositori
+es\QueueVehicles\GetAct
+iveQueueRepository.cs(3
+4,135): error CS1061: 
+"Person" no contiene 
+una definición para 
+"Lastname" ni un 
+método de extensión 
+accesible "Lastname" 
+que acepte un primer 
+argumento del tipo 
+"Person" (¿falta 
+alguna directiva using 
+o una referencia de 
+ensamblado?) [C:\Users\
+dacha\Documents\APLICAC
+IONES_WEB\TRAVELGO\Trav
+elGo-Backend\Persistenc
+e\Persistence.csproj]
+msbuild.log:14317:   2:
+8>C:\Users\dacha\Docume
+nts\APLICACIONES_WEB\TR
+AVELGO\TravelGo-Backend
+\Persistence\Repositori
+es\QueueVehicles\GetAct
+iveQueueRepository.cs(3
+5,75): error CS1061: 
+"Person" no contiene 
+una definición para 
+"Dni" ni un método de 
+extensión accesible 
+"Dni" que acepte un 
+primer argumento del 
+tipo "Person" (¿falta 
+alguna directiva using 
+o una referencia de 
+ensamblado?) [C:\Users\
+dacha\Documents\APLICAC
+IONES_WEB\TRAVELGO\Trav
+elGo-Backend\Persistenc
+e\Persistence.csproj]
+msbuild.log:14318:   2:
+8>C:\Users\dacha\Docume
+nts\APLICACIONES_WEB\TR
+AVELGO\TravelGo-Backend
+\Persistence\Repositori
+es\QueueVehicles\GetAct
+iveQueueRepository.cs(3
+6,59): error CS1061: 
+"Vehicle" no contiene 
+una definición para 
+"LicensePlate" ni un 
+método de extensión 
+accesible 
+"LicensePlate" que 
+acepte un primer 
+argumento del tipo 
+"Vehicle" (¿falta 
+alguna directiva using 
+o una referencia de 
+ensamblado?) [C:\Users\
+dacha\Documents\APLICAC
+IONES_WEB\TRAVELGO\Trav
+elGo-Backend\Persistenc
+e\Persistence.csproj]
+msbuild.log:14319:   2:
+8>C:\Users\dacha\Docume
+nts\APLICACIONES_WEB\TR
+AVELGO\TravelGo-Backend
+\Persistence\Repositori
+es\QueueVehicles\GetAct
+iveQueueRepository.cs(3
+7,59): error CS1061: 
+"Vehicle" no contiene 
+una definición para 
+"VehicleModel" ni un 
+método de extensión 
+accesible 
+"VehicleModel" que 
+acepte un primer 
+argumento del tipo 
+"Vehicle" (¿falta 
+alguna directiva using 
+o una referencia de 
+ensamblado?) [C:\Users\
+dacha\Documents\APLICAC
+IONES_WEB\TRAVELGO\Trav
+elGo-Backend\Persistenc
+e\Persistence.csproj]
+msbuild.log:14320:   2:
+8>C:\Users\dacha\Docume
+nts\APLICACIONES_WEB\TR
+AVELGO\TravelGo-Backend
+\Persistence\Repositori
+es\QueueVehicles\AddQue
+ueVehicleRepository.cs(
+20,75): error CS1061: 
+"Person" no contiene 
+una definición para 
+"Dni" ni un método de 
+extensión accesible 
+"Dni" que acepte un 
+primer argumento del 
+tipo "Person" (¿falta 
+alguna directiva using 
+o una referencia de 
+ensamblado?) [C:\Users\
+dacha\Documents\APLICAC
+IONES_WEB\TRAVELGO\Trav
+elGo-Backend\Persistenc
+e\Persistence.csproj]
+msbuild.log:14463:     
+    C:\Users\dacha\Docu
+ments\APLICACIONES_WEB\
+TRAVELGO\TravelGo-Backe
+nd\Persistence\Reposito
+ries\LoginRepositoy.cs(
+48,17): error CS1912: 
+Inicialización del 
+miembro 'IdAccount' 
+duplicada [C:\Users\dac
+ha\Documents\APLICACION
+ES_WEB\TRAVELGO\TravelG
+o-Backend\Persistence\P
+ersistence.csproj]
+msbuild.log:14464:     
+    C:\Users\dacha\Docu
+ments\APLICACIONES_WEB\
+TRAVELGO\TravelGo-Backe
+nd\Persistence\Reposito
+ries\QueueVehicles\GetA
+ctiveQueueRepository.cs
+(34,80): error CS1061: 
+"Person" no contiene 
+una definición para 
+"Name" ni un método de 
+extensión accesible 
+"Name" que acepte un 
+primer argumento del 
+tipo "Person" (¿falta 
+alguna directiva using 
+o una referencia de 
+ensamblado?) [C:\Users\
+dacha\Documents\APLICAC
+IONES_WEB\TRAVELGO\Trav
+elGo-Backend\Persistenc
+e\Persistence.csproj]
+msbuild.log:14465:     
+    C:\Users\dacha\Docu
+ments\APLICACIONES_WEB\
+TRAVELGO\TravelGo-Backe
+nd\Persistence\Reposito
+ries\QueueVehicles\GetA
+ctiveQueueRepository.cs
+(34,135): error 
+CS1061: "Person" no 
+contiene una 
+definición para 
+"Lastname" ni un 
+método de extensión 
+accesible "Lastname" 
+que acepte un primer 
+argumento del tipo 
+"Person" (¿falta 
+alguna directiva using 
+o una referencia de 
+ensamblado?) [C:\Users\
+dacha\Documents\APLICAC
+IONES_WEB\TRAVELGO\Trav
+elGo-Backend\Persistenc
+e\Persistence.csproj]
+msbuild.log:14466:     
+    C:\Users\dacha\Docu
+ments\APLICACIONES_WEB\
+TRAVELGO\TravelGo-Backe
+nd\Persistence\Reposito
+ries\QueueVehicles\GetA
+ctiveQueueRepository.cs
+(35,75): error CS1061: 
+"Person" no contiene 
+una definición para 
+"Dni" ni un método de 
+extensión accesible 
+"Dni" que acepte un 
+primer argumento del 
+tipo "Person" (¿falta 
+alguna directiva using 
+o una referencia de 
+ensamblado?) [C:\Users\
+dacha\Documents\APLICAC
+IONES_WEB\TRAVELGO\Trav
+elGo-Backend\Persistenc
+e\Persistence.csproj]
+msbuild.log:14467:     
+    C:\Users\dacha\Docu
+ments\APLICACIONES_WEB\
+TRAVELGO\TravelGo-Backe
+nd\Persistence\Reposito
+ries\QueueVehicles\GetA
+ctiveQueueRepository.cs
+(36,59): error CS1061: 
+"Vehicle" no contiene 
+una definición para 
+"LicensePlate" ni un 
+método de extensión 
+accesible 
+"LicensePlate" que 
+acepte un primer 
+argumento del tipo 
+"Vehicle" (¿falta 
+alguna directiva using 
+o una referencia de 
+ensamblado?) [C:\Users\
+dacha\Documents\APLICAC
+IONES_WEB\TRAVELGO\Trav
+elGo-Backend\Persistenc
+e\Persistence.csproj]
+msbuild.log:14468:     
+    C:\Users\dacha\Docu
+ments\APLICACIONES_WEB\
+TRAVELGO\TravelGo-Backe
+nd\Persistence\Reposito
+ries\QueueVehicles\GetA
+ctiveQueueRepository.cs
+(37,59): error CS1061: 
+"Vehicle" no contiene 
+una definición para 
+"VehicleModel" ni un 
+método de extensión 
+accesible 
+"VehicleModel" que 
+acepte un primer 
+argumento del tipo 
+"Vehicle" (¿falta 
+alguna directiva using 
+o una referencia de 
+ensamblado?) [C:\Users\
+dacha\Documents\APLICAC
+IONES_WEB\TRAVELGO\Trav
+elGo-Backend\Persistenc
+e\Persistence.csproj]
+msbuild.log:14469:     
+    C:\Users\dacha\Docu
+ments\APLICACIONES_WEB\
+TRAVELGO\TravelGo-Backe
+nd\Persistence\Reposito
+ries\QueueVehicles\AddQ
+ueueVehicleRepository.c
+s(20,75): error 
+CS1061: "Person" no 
+contiene una 
+definición para "Dni" 
+ni un método de 
+extensión accesible 
+"Dni" que acepte un 
+primer argumento del 
+tipo "Person" (¿falta 
+alguna directiva using 
+o una referencia de 
+ensamblado?) [C:\Users\
+dacha\Documents\APLICAC
+IONES_WEB\TRAVELGO\Trav
+elGo-Backend\Persistenc
+e\Persistence.csproj]
+
+

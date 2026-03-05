@@ -439,6 +439,11 @@ public partial class ApplicationDbContext : DbContext
 
             entity.Property(e => e.IdQueueVehicle).HasColumnName("idQueueVehicle");
             entity.Property(e => e.Number).HasColumnName("number");
+            entity.Property(e => e.IdDepartureTime).HasColumnName("idDepartureTime");
+
+            entity.HasOne(d => d.IdDepartureTimeNavigation).WithMany(p => p.QueueVehicles)
+                .HasForeignKey(d => d.IdDepartureTime)
+                .HasConstraintName("FK_QueueVehicle_DepartureTime");
         });
 
         modelBuilder.Entity<Role>(entity =>

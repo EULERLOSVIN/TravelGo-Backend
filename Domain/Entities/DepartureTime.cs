@@ -12,4 +12,6 @@ public partial class DepartureTime
     public TimeOnly Hour { get; set; }
 
     public virtual TravelRoute IdTravelRouteNavigation { get; set; } = null!;
+
+    public virtual ICollection<QueueVehicle> QueueVehicles { get; set; } = new List<QueueVehicle>();
 }

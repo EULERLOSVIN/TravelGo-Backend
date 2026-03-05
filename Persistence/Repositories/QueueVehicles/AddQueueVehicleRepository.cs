@@ -17,7 +17,7 @@ namespace Persistence.Repositories.QueueVehicles
         public async Task<int> AddQueueVehicleAsync(AddQueueVehicleDto dto)
         {
             // 1. Encuentra a la Persona por el string DriverDni proveído en el DTO
-            var person = await _context.People.FirstOrDefaultAsync(p => p.Dni == dto.DriverDni);
+            var person = await _context.People.FirstOrDefaultAsync(p => p.NumberIdentityDocument == dto.DriverDni);
             if (person == null) throw new Exception("Chofer no encontrado por DNI.");
 
             // 2. Encuentra al Vehículo amarrado a esa Persona
@@ -43,7 +43,8 @@ namespace Persistence.Repositories.QueueVehicles
 
             var queueVehicle = new QueueVehicle
             {
-                Number = newTurn
+                Number = newTurn,
+                IdDepartureTime = dto.IdDepartureTime
             };
 
             await _context.QueueVehicles.AddAsync(queueVehicle);
