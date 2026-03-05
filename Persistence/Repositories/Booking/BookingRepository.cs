@@ -25,7 +25,7 @@ namespace Persistence.Repositories.Booking
                     .FirstOrDefaultAsync(s => s.IdSeatVehicle == idSeatVehicle && s.StateSeat == true);
 
                 if (seat == null) return false;
-                seat.StateSeat = true;
+                seat.StateSeat = false;
                 _context.SeatVehicles.Update(seat);
                 return await _context.SaveChangesAsync() > 0;
             }
@@ -35,51 +35,51 @@ namespace Persistence.Repositories.Booking
             }
         }
 
-        // REGISTRAR DATOS DEL PASAJERO
-        public async Task<bool> UpdatePassengerDetails(int idSeatVehicle, string dni, string fullName, string pickUp)
-        {
-            var seat = await _context.SeatVehicles.FirstOrDefaultAsync(s => s.IdSeatVehicle == idSeatVehicle);
+        //// REGISTRAR DATOS DEL PASAJERO
+        //public async Task<bool> UpdatePassengerDetails(int idSeatVehicle, string dni, string fullName, string pickUp)
+        //{
+        //    var seat = await _context.SeatVehicles.FirstOrDefaultAsync(s => s.IdSeatVehicle == idSeatVehicle);
 
-            if (seat != null && seat.StateSeat == true)
-            {
-                _context.SeatVehicles.Update(seat);
-                return await _context.SaveChangesAsync() > 0;
-            }
-            return false;
-        }
+        //    if (seat != null && seat.StateSeat == true)
+        //    {
+        //        _context.SeatVehicles.Update(seat);
+        //        return await _context.SaveChangesAsync() > 0;
+        //    }
+        //    return false;
+        //}
 
-        // CONFIRMAR PAGO
-        public async Task<bool> ConfirmPayment(int idSeatVehicle)
-        {
-            var seat = await _context.SeatVehicles.FirstOrDefaultAsync(s => s.IdSeatVehicle == idSeatVehicle);
-            if (seat == null) return false;
+        //// CONFIRMAR PAGO
+        //public async Task<bool> ConfirmPayment(int idSeatVehicle)
+        //{
+        //    var seat = await _context.SeatVehicles.FirstOrDefaultAsync(s => s.IdSeatVehicle == idSeatVehicle);
+        //    if (seat == null) return false;
 
-            seat.StateSeat = false;
-            _context.SeatVehicles.Update(seat);
-            return await _context.SaveChangesAsync() > 0;
-        }
+        //    seat.StateSeat = false;
+        //    _context.SeatVehicles.Update(seat);
+        //    return await _context.SaveChangesAsync() > 0;
+        //}
 
-        // LIBERAR ASIENTO
-        public async Task<bool> ReleaseSeat(int idSeatVehicle)
-        {
-            var seat = await _context.SeatVehicles.FirstOrDefaultAsync(s => s.IdSeatVehicle == idSeatVehicle);
-            if (seat == null) return false;
+        //// LIBERAR ASIENTO
+        //public async Task<bool> ReleaseSeat(int idSeatVehicle)
+        //{
+        //    var seat = await _context.SeatVehicles.FirstOrDefaultAsync(s => s.IdSeatVehicle == idSeatVehicle);
+        //    if (seat == null) return false;
 
-            seat.StateSeat = false;
-            _context.SeatVehicles.Update(seat);
-            return await _context.SaveChangesAsync() > 0;
-        }
+        //    seat.StateSeat = false;
+        //    _context.SeatVehicles.Update(seat);
+        //    return await _context.SaveChangesAsync() > 0;
+        //}
 
-        // CRONÓMETRO DE 10 MINUTOS
-        public async Task ReleaseSeatIfPending(int idSeatVehicle)
-        {
-            var seat = await _context.SeatVehicles.FindAsync(idSeatVehicle);
-            if (seat != null && seat.StateSeat == true)
-            {
-                seat.StateSeat = false;
-                await _context.SaveChangesAsync();
-            }
-        }
+        //// CRONÓMETRO DE 10 MINUTOS
+        //public async Task ReleaseSeatIfPending(int idSeatVehicle)
+        //{
+        //    var seat = await _context.SeatVehicles.FindAsync(idSeatVehicle);
+        //    if (seat != null && seat.StateSeat == true)
+        //    {
+        //        seat.StateSeat = false;
+        //        await _context.SaveChangesAsync();
+        //    }
+        //}
         
         public async Task<bool> RegisterBooking(RegisterBookingDto dto)
         {
@@ -132,11 +132,7 @@ namespace Persistence.Repositories.Booking
 
                 foreach (var seat in seatsSelected)
                 {
-                    // 1. Primero, aseguramos el estado del asiento
                     await SelectSeat(seat.IdSeatVehicle);
-
-                    // 2. Generamos el código ANTES de crear el objeto
-                    // (Esto evita que el objeto se cree con nulos si algo fallara en la generación)
                     string generatedCode = Guid.NewGuid().ToString().Substring(0, 8).ToUpper();
 
                     // 3. Creamos el objeto

@@ -16,26 +16,26 @@ namespace API.Controllers
             _mediator = mediator;
         }
 
-        [HttpPost("select-seat")]
-        public async Task<IActionResult> SelectSeat([FromBody] SelectSeatCommand command)
-        {
-            var result = await _mediator.Send(command);
-            return result.IsSuccess ? Ok(result) : BadRequest(result);
-        }
+        //[HttpPost("select-seat")]
+        //public async Task<IActionResult> SelectSeat([FromBody] SelectSeatCommand command)
+        //{
+        //    var result = await _mediator.Send(command);
+        //    return result.IsSuccess ? Ok(result) : BadRequest(result);
+        //}
 
-        [HttpPost("passenger-data")]
-        public async Task<IActionResult> RegisterPassenger([FromBody] RegisterPassengerCommand command)
-        {
-            var result = await _mediator.Send(command);
-            return result.IsSuccess ? Ok(result) : BadRequest(result);
-        }
+        //[HttpPost("passenger-data")]
+        //public async Task<IActionResult> RegisterPassenger([FromBody] RegisterPassengerCommand command)
+        //{
+        //    var result = await _mediator.Send(command);
+        //    return result.IsSuccess ? Ok(result) : BadRequest(result);
+        //}
 
-        [HttpPost("confirm-payment")]
-        public async Task<IActionResult> ConfirmPayment([FromBody] ConfirmPaymentCommand command)
-        {
-            var result = await _mediator.Send(command);
-            return result.IsSuccess ? Ok(result) : BadRequest(result);
-        }
+        //[HttpPost("confirm-payment")]
+        //public async Task<IActionResult> ConfirmPayment([FromBody] ConfirmPaymentCommand command)
+        //{
+        //    var result = await _mediator.Send(command);
+        //    return result.IsSuccess ? Ok(result) : BadRequest(result);
+        //}
 
         [HttpGet("GetSeatByIdOfVehicle/")]
         public async Task<IActionResult> GetSeatByIdOfVehicle([FromQuery] GetSeatByIdOfVehicleQuery query)

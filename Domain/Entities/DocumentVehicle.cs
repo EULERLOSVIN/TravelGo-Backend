@@ -9,8 +9,6 @@ public partial class DocumentVehicle
 
     public int IdVehicle { get; set; }
 
-    public string NumberSoat { get; set; } = null!;
-
     public DateOnly ExpirationDate { get; set; }
 
     public virtual Vehicle IdVehicleNavigation { get; set; } = null!;

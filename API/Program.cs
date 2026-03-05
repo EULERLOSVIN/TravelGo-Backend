@@ -3,19 +3,32 @@ using Application.Interfaces;
 using Application.Interfaces.Settings;
 using Application.Interfaces.Booking;
 using Application.Interfaces.Customers;
+using Application.Interfaces.Driver;
 using Application.Interfaces.Headquarters;
 using Application.Interfaces.ManagementUser;
+using Application.Interfaces.vehicles;
+using Application.Interfaces.ManageSales;
 using Infrastructure.ExternalServices;
 using Microsoft.EntityFrameworkCore;
 using Persistence.Context;
 using Persistence.Repositories;
 using Persistence.Repositories.Booking;
 using Persistence.Repositories.Customers;
+using Persistence.Repositories.vehicles;
+using Persistence.Repositories.Driver;
 using Persistence.Repositories.Headquarters;
+
 using Persistence.Repositories.Settings;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+
+using Persistence.Repositories.ManageSales;
+using Application.Interfaces.QueueVehicles;
+using Persistence.Repositories.QueueVehicles;
+using Application.Interfaces.DepartureTimes;
+using Persistence.Repositories.DepartureTimes;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -49,12 +62,23 @@ builder.Services.AddScoped<IGetUserRepository, GetUserRepository>();
 builder.Services.AddScoped<IEditUserRepository, EditUserRepository>();
 builder.Services.AddScoped<IDeleteUserRepository, DeleteUserRepository>(); 
 builder.Services.AddScoped<IGetAllPlaceofRouteRepository, GetAllPlaceofRouteRepository>();
+//vehicles
+builder.Services.AddScoped<IVehicleRepository, VehicleRepository>();
+builder.Services.AddScoped<IGetAllDriverRepository, GetAllDriverRepository>();
 builder.Services.AddScoped<IBookingRepository, BookingRepository>();
 builder.Services.AddScoped<ISearchRouteRepository, SearchRouteRepository>();
 builder.Services.AddScoped<IGetDepartureTimeRepository, GetDepartureTimeRepository>();
+builder.Services.AddScoped<IGetSalesRepository, GetSalesRepository>();
+
 
 //BOOKING
 builder.Services.AddScoped<IGetSeatRepository, GetSeatRepository>();
+
+
+//TRIPS
+builder.Services.AddScoped<IStartingOrderRepository, StartingOrderRepository>();
+builder.Services.AddScoped<ITripsRepository, TripsRepository>();
+
 
 // Lugares (Places)
 builder.Services.AddScoped<IAddPlaceRepository, AddPlaceRepository>();
@@ -64,10 +88,24 @@ builder.Services.AddScoped<IDeletePlaceRepository, DeletePlaceRepository>();
 builder.Services.AddScoped<IGenerateUniqueEmailRepository, GenerateUniqueEmailRepository>();
 builder.Services.AddScoped<IHeadquarterRepository, HeadquarterRepository>();
 
+
 // Settings
 builder.Services.AddScoped<ISettingCompanyRepository, SettingCompanyRepository>();
 builder.Services.AddScoped<IProfileRepository, ProfileRepository>();
 
+//MANAGE SALES
+builder.Services.AddScoped<IGetFilterRepository, GetFilterRepository>();
+
+// QUEUE VEHICLES
+builder.Services.AddScoped<IAddQueueVehicleRepository, AddQueueVehicleRepository>();
+builder.Services.AddScoped<IDeleteQueueVehicleRepository, DeleteQueueVehicleRepository>();
+builder.Services.AddScoped<IGetActiveQueueRepository, GetActiveQueueRepository>();
+builder.Services.AddScoped<IUpdateQueueVehicleRouteRepository, UpdateQueueVehicleRouteRepository>();
+
+// DEPARTURE TIMES
+builder.Services.AddScoped<IAddDepartureTimeRepository, AddDepartureTimeRepository>();
+builder.Services.AddScoped<IDeleteDepartureTimeRepository, DeleteDepartureTimeRepository>();
+builder.Services.AddScoped<IGetDepartureTimesByRouteRepository, GetDepartureTimesByRouteRepository>();
 // 4. Conexión a SQL Server en AWS RDS
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));

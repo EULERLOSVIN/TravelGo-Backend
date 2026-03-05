@@ -9,15 +9,15 @@ public partial class Trip
 
     public int IdStateTrip { get; set; }
 
-    public int IdTravelTicket { get; set; }
-
     public DateTime? DepartureDate { get; set; }
 
     public DateTime? ArrivalDate { get; set; }
 
+    public int IdVehicle { get; set; }
+
     public virtual StateTrip IdStateTripNavigation { get; set; } = null!;
 
-    public virtual TravelTicket IdTravelTicketNavigation { get; set; } = null!;
+    public virtual Vehicle IdVehicleNavigation { get; set; } = null!;
 
     public virtual ICollection<Notification> Notifications { get; set; } = new List<Notification>();
 }
