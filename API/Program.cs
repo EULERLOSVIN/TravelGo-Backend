@@ -1,6 +1,7 @@
 ﻿using Application.Features.Authentication.Commands;
 using Application.Interfaces;
 using Application.Interfaces.Settings;
+using Application.Interfaces.QueueManagement;
 using Application.Interfaces.Booking;
 using Application.Interfaces.Customers;
 using Application.Interfaces.Driver;
@@ -29,6 +30,7 @@ using Persistence.Repositories.QueueVehicles;
 using Application.Interfaces.DepartureTimes;
 using Persistence.Repositories.DepartureTimes;
 
+using Persistence.Repositories.QueueManagement;
 
 var builder = WebApplication.CreateBuilder(args);
 
