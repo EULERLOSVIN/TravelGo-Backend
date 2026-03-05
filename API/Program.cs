@@ -1,5 +1,5 @@
 ﻿using Application.Features.Authentication.Commands;
-using Application.Interfaces;
+using Application.Interfaces.QueueManagement;
 using Application.Interfaces.Booking;
 using Application.Interfaces.Customers;
 using Application.Interfaces.Driver;
@@ -17,6 +17,7 @@ using Persistence.Repositories.vehicles;
 using Persistence.Repositories.Driver;
 using Persistence.Repositories.Headquarters;
 using Persistence.Repositories.ManageSales;
+using Persistence.Repositories.QueueManagement;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -62,12 +63,10 @@ builder.Services.AddScoped<IGetSalesRepository, GetSalesRepository>();
 //BOOKING
 builder.Services.AddScoped<IGetSeatRepository, GetSeatRepository>();
 
-<<<<<<< HEAD
-=======
+
 //TRIPS
 builder.Services.AddScoped<IStartingOrderRepository, StartingOrderRepository>();
 builder.Services.AddScoped<ITripsRepository, TripsRepository>();
->>>>>>> Euler
 
 // Lugares (Places)
 builder.Services.AddScoped<IAddPlaceRepository, AddPlaceRepository>();
