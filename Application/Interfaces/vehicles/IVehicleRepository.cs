@@ -4,7 +4,9 @@ namespace Application.Interfaces;
 
 public interface IVehicleRepository
 {
+    Task<bool> CreateVehicleAsync(CreateVehicleDto dto);
     Task<List<VehicleListItemDto>> GetVehiclesAsync();
     Task<VehicleSummaryDto> GetSummaryAsync();
-    Task<int> CreateVehicleAsync(CreateVehicleDto dto);
+    Task<bool> UpdateVehicleAsync(string unitId, CreateVehicleDto dto);
+    Task<bool> DeleteVehicleAsync(string unitId);
 }

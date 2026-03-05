@@ -4,21 +4,15 @@ using Application.Interfaces.Booking;
 using Application.Interfaces.Customers;
 using Application.Interfaces.Headquarters;
 using Application.Interfaces.ManagementUser;
-<<<<<<< HEAD
 using Application.Interfaces.vehicles;
-=======
 using Infrastructure.ExternalServices;
->>>>>>> develop
 using Microsoft.EntityFrameworkCore;
 using Persistence.Context;
 using Persistence.Repositories;
 using Persistence.Repositories.Booking;
 using Persistence.Repositories.Customers;
-<<<<<<< HEAD
 using Persistence.Repositories.vehicles;
-=======
 using Persistence.Repositories.Headquarters;
->>>>>>> develop
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -52,18 +46,16 @@ builder.Services.AddScoped<IGetUserRepository, GetUserRepository>();
 builder.Services.AddScoped<IEditUserRepository, EditUserRepository>();
 builder.Services.AddScoped<IDeleteUserRepository, DeleteUserRepository>(); 
 builder.Services.AddScoped<IGetAllPlaceofRouteRepository, GetAllPlaceofRouteRepository>();
-<<<<<<< HEAD
 //vehicles
 builder.Services.AddScoped<IVehicleRepository, VehicleRepository>();
 builder.Services.AddScoped<IGetAllDriverRepository, GetAllDriverRepository>();
-=======
 builder.Services.AddScoped<IBookingRepository, BookingRepository>();
 builder.Services.AddScoped<ISearchRouteRepository, SearchRouteRepository>();
 builder.Services.AddScoped<IGetDepartureTimeRepository, GetDepartureTimeRepository>();
 
 //BOOKING
 builder.Services.AddScoped<IGetSeatRepository, GetSeatRepository>();
->>>>>>> develop
+
 
 // Lugares (Places)
 builder.Services.AddScoped<IAddPlaceRepository, AddPlaceRepository>();
