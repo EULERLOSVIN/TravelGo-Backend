@@ -20,6 +20,14 @@ namespace Persistence.Repositories.QueueVehicles
             var person = await _context.People.FirstOrDefaultAsync(p => p.NumberIdentityDocument == dni);
             if (person == null) return null; // DNI not found -> 404
 
+            // Security check: only allow drivers (role = "Chofer") to be found
+            var account = await _context.Accounts
+                .Include(a => a.IdRoleNavigation)
+                .FirstOrDefaultAsync(a => a.IdPerson == person.IdPerson);
+
+            if (account == null || account.IdRoleNavigation.Name != "Chofer")
+                return null; // Non-driver roles are treated as not found
+
             // Build partial DTO with driver name (always returned when person exists)
             var dto = new DriverQueueInfoDto
             {
