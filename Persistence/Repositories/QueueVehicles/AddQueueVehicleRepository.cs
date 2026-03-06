@@ -1,3 +1,4 @@
+using Domain.Entities;
 using Application.DTOs.QueueVehicles;
 using Application.Interfaces.QueueVehicles;
 using Microsoft.EntityFrameworkCore;
@@ -54,7 +55,8 @@ namespace Persistence.Repositories.QueueVehicles
             var assignQueue = new AssignQueue
             {
                 IdQueueVehicle = queueVehicle.IdQueueVehicle,
-                IdVehicle = vehicle.IdVehicle
+                IdVehicle = vehicle.IdVehicle,
+                IdTravelRoute = dto.IdTravelRoute
             };
 
             // NOTA: EL ER Model original no tiene "IdTravelRoute" en "AssignQueue". Si la Secretaria DEBE mandar la ruta,

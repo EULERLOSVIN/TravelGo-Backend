@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Persistence;
+namespace Domain.Entities;
 
 public partial class Company
 {

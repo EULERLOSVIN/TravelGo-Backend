@@ -1,3 +1,4 @@
+using Domain.Entities;
 using Application.Interfaces.QueueVehicles;
 using Microsoft.EntityFrameworkCore;
 using Persistence.Context;

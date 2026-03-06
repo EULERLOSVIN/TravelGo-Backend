@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
+using Domain.Entities;
 
 namespace Persistence.Context;
 
@@ -124,6 +125,7 @@ public partial class ApplicationDbContext : DbContext
             entity.Property(e => e.IdAssignQueue).HasColumnName("idAssignQueue");
             entity.Property(e => e.IdQueueVehicle).HasColumnName("idQueueVehicle");
             entity.Property(e => e.IdVehicle).HasColumnName("idVehicle");
+            entity.Property(e => e.IdTravelRoute).HasColumnName("idTravelRoute");
 
             entity.HasOne(d => d.IdQueueVehicleNavigation).WithMany(p => p.AssignQueues)
                 .HasForeignKey(d => d.IdQueueVehicle)
@@ -134,6 +136,11 @@ public partial class ApplicationDbContext : DbContext
                 .HasForeignKey(d => d.IdVehicle)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_AssignQueue_Vehicle");
+
+            entity.HasOne(d => d.IdTravelRouteNavigation).WithMany()
+                .HasForeignKey(d => d.IdTravelRoute)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_AssignQueue_TravelRoute");
         });
 
         modelBuilder.Entity<Assignment>(entity =>

@@ -1,3 +1,4 @@
+using Domain.Entities;
 using Application.Interfaces;
 using Persistence.Context;
 using Microsoft.EntityFrameworkCore;

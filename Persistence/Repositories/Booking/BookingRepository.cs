@@ -1,3 +1,4 @@
+using Domain.Entities;
 ﻿using Application.DTOs.Customers;
 using Application.Interfaces.Booking;
 using Microsoft.EntityFrameworkCore;

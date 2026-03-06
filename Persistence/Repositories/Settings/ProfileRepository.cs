@@ -1,3 +1,4 @@
+using Domain.Entities;
 using Application.DTOs.Settings;
 using Application.Interfaces.Settings;
 using Microsoft.EntityFrameworkCore;

@@ -1,3 +1,4 @@
+using Domain.Entities;
 using Application.DTOs.QueueVehicles;
 using Application.Interfaces.QueueVehicles;
 using Microsoft.EntityFrameworkCore;

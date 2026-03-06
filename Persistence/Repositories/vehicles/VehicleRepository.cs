@@ -1,3 +1,4 @@
+using Domain.Entities;
 ﻿using Application.DTOs.Vehicles;
 using Application.Interfaces;
 using Microsoft.EntityFrameworkCore;

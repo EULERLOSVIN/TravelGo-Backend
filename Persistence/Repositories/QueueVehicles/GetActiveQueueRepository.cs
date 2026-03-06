@@ -1,3 +1,4 @@
+using Domain.Entities;
 using Application.DTOs.QueueVehicles;
 using Application.Interfaces.QueueVehicles;
 using Microsoft.EntityFrameworkCore;
@@ -20,35 +21,76 @@ namespace Persistence.Repositories.QueueVehicles
             // que esten asignados a una ruta de esta Sede (idPlaceA == idHeadquarter).
 
             var queueData = await _context.AssignQueues
+                .AsNoTracking()
                 .Include(aq => aq.IdQueueVehicleNavigation)
                 .Include(aq => aq.IdVehicleNavigation)
                     .ThenInclude(v => v.IdPersonNavigation)
-                        .ThenInclude(p => p.RouteAssignments)
-                            .ThenInclude(ra => ra.IdTravelRouteNavigation)
-                .Where(aq => aq.IdVehicleNavigation.IdPersonNavigation.RouteAssignments
-                              .Any(ra => ra.IdTravelRouteNavigation.IdPlaceA == idHeadquarter))
-                .Select(aq => new QueueVehicleResponseDto
-                {
-                    IdAssignQueue = aq.IdAssignQueue,
-                    Turn = aq.IdQueueVehicleNavigation.Number,
-                    DriverFullName = aq.IdVehicleNavigation.IdPersonNavigation.FirstName + " " + aq.IdVehicleNavigation.IdPersonNavigation.LastName,
-                    DriverDni = aq.IdVehicleNavigation.IdPersonNavigation.NumberIdentityDocument,
-                    VehiclePlate = aq.IdVehicleNavigation.PlateNumber, // Ajustar nombre columna placa si LicensePlate no existe
-                    VehicleModel = aq.IdVehicleNavigation.Model, // Ajustar nombre columna modelo
-                    // Para simplificar, toma la primer ruta asignada activa de la sede.
-                    IdRoute = aq.IdVehicleNavigation.IdPersonNavigation.RouteAssignments
-                              .Where(ra => ra.IdTravelRouteNavigation.IdPlaceA == idHeadquarter)
-                              .Select(ra => ra.IdTravelRoute)
-                              .FirstOrDefault(),
-                    DestinationName = aq.IdVehicleNavigation.IdPersonNavigation.RouteAssignments
-                              .Where(ra => ra.IdTravelRouteNavigation.IdPlaceA == idHeadquarter)
-                              .Select(ra => ra.IdTravelRouteNavigation.NameRoute)
-                              .FirstOrDefault() ?? "Sin Destino"
-                })
-                .OrderBy(q => q.Turn)
+                .Include(aq => aq.IdVehicleNavigation)
+                    .ThenInclude(v => v.DetailVehicles)
+                .Include(aq => aq.IdTravelRouteNavigation)
+                    .ThenInclude(tr => tr.DepartureTimes)
+                .Where(aq => aq.IdTravelRouteNavigation.IdPlaceA == idHeadquarter)
+                .OrderBy(aq => aq.IdQueueVehicleNavigation.Number)
                 .ToListAsync();
 
-            return queueData;
+            var routeGroups = queueData.GroupBy(aq => aq.IdTravelRoute);
+            var result = new List<QueueVehicleResponseDto>();
+            var currentTime = TimeOnly.FromDateTime(DateTime.Now);
+
+            foreach (var group in routeGroups)
+            {
+                var orderedQueue = group.OrderBy(aq => aq.IdQueueVehicleNavigation.Number).ToList();
+                for (int i = 0; i < orderedQueue.Count; i++)
+                {
+                    var aq = orderedQueue[i];
+                    var isEnTurno = i == 0;
+                    var detailVehicle = aq.IdVehicleNavigation.DetailVehicles.FirstOrDefault();
+                    var totalSeats = detailVehicle?.SeatNumber ?? 0;
+
+                    int occupiedSeats = 0;
+                    if (isEnTurno)
+                    {
+                        var today = DateOnly.FromDateTime(DateTime.Now);
+                        occupiedSeats = await _context.TravelTickets
+                            .CountAsync(t => t.IdVehicle == aq.IdVehicle && t.TravelDate == today);
+                    }
+
+                    string departureTimeStr = "--:--";
+                    int remainingMins = 0;
+                    var upcomingDeparture = aq.IdTravelRouteNavigation?.DepartureTimes
+                        .Where(dt => dt.Hour > currentTime)
+                        .OrderBy(dt => dt.Hour)
+                        .Skip(i)
+                        .FirstOrDefault();
+
+                    if (upcomingDeparture != null)
+                    {
+                        departureTimeStr = upcomingDeparture.Hour.ToString("hh:mm tt");
+                        remainingMins = (int)(upcomingDeparture.Hour.ToTimeSpan() - currentTime.ToTimeSpan()).TotalMinutes;
+                    }
+
+                    result.Add(new QueueVehicleResponseDto
+                    {
+                        IdAssignQueue = aq.IdAssignQueue,
+                        Turn = aq.IdQueueVehicleNavigation.Number,
+                        DriverFullName = aq.IdVehicleNavigation.IdPersonNavigation != null 
+                            ? aq.IdVehicleNavigation.IdPersonNavigation.FirstName + " " + aq.IdVehicleNavigation.IdPersonNavigation.LastName 
+                            : "S/N",
+                        DriverDni = aq.IdVehicleNavigation.IdPersonNavigation?.NumberIdentityDocument ?? "S/N",
+                        VehiclePlate = aq.IdVehicleNavigation.PlateNumber ?? "S/N",
+                        VehicleModel = aq.IdVehicleNavigation.Model ?? "N/A",
+                        IdRoute = aq.IdTravelRoute,
+                        DestinationName = aq.IdTravelRouteNavigation?.NameRoute ?? "Sin Destino",
+                        OccupiedSeats = occupiedSeats,
+                        TotalSeats = totalSeats,
+                        ScheduledDepartureTime = departureTimeStr,
+                        RemainingMinutes = remainingMins,
+                        Status = isEnTurno ? "EN TURNO" : "EN COLA"
+                    });
+                }
+            }
+
+            return result.OrderBy(r => r.Turn).ToList();
         }
     }
 }

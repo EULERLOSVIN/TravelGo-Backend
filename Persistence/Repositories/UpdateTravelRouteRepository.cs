@@ -1,3 +1,4 @@
+using Domain.Entities;
 // rutas=darwin
 using Application.DTOs;
 using Application.Interfaces;

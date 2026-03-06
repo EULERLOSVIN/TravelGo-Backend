@@ -1,3 +1,4 @@
+using Domain.Entities;
 using Application.DTOs.DepartureTimes;
 using Application.Interfaces.DepartureTimes;
 using Microsoft.EntityFrameworkCore;

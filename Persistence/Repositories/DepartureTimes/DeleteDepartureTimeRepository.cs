@@ -1,3 +1,4 @@
+using Domain.Entities;
 using Application.Interfaces.DepartureTimes;
 using Persistence.Context;
 using System.Threading.Tasks;

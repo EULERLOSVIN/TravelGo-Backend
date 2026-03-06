@@ -27,6 +27,14 @@ namespace API.Controllers
             return Ok(result);
         }
 
+        [HttpGet("getDriverQueueInfo/{dni}")]
+        public async Task<IActionResult> GetDriverQueueInfo(string dni)
+        {
+            var result = await _mediator.Send(new Application.Features.QueueVehicles.Queries.GetDriverQueueInfo.GetDriverQueueInfoQuery(dni));
+            if (result == null) return NotFound("Chofer no encontrado.");
+            return Ok(result);
+        }
+
         [HttpPut("updateRoute")]
         public async Task<IActionResult> UpdateRoute([FromBody] UpdateRouteQueueVehicleDto dto)
         {

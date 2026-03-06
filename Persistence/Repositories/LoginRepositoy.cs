@@ -7,6 +7,7 @@ using Persistence.Context;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using Domain.Entities;
 
 namespace Persistence.Repositories
 {

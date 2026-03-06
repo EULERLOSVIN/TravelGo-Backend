@@ -1,3 +1,4 @@
+using Domain.Entities;
 ﻿using Persistence.Context;
 using System;
 using System.Collections.Generic;

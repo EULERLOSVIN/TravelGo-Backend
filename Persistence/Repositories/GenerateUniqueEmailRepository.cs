@@ -1,3 +1,4 @@
+using Domain.Entities;
 ﻿using Application.Interfaces.ManagementUser;
 using Microsoft.EntityFrameworkCore;
 using Persistence.Context;
