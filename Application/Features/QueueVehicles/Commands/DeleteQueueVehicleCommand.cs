@@ -1,11 +1,12 @@
+using Application.Common;
 using Application.Interfaces.QueueVehicles;
 using MediatR;
 
 namespace Application.Features.QueueVehicles.Commands
 {
-    public record DeleteQueueVehicleCommand(int IdAssignQueue) : IRequest<bool>;
+    public record DeleteQueueVehicleCommand(int IdAssignQueue) : IRequest<Result<bool>>;
 
-    public class DeleteQueueVehicleHandler : IRequestHandler<DeleteQueueVehicleCommand, bool>
+    public class DeleteQueueVehicleHandler : IRequestHandler<DeleteQueueVehicleCommand, Result<bool>>
     {
         private readonly IDeleteQueueVehicleRepository _repository;
 
@@ -14,9 +15,10 @@ namespace Application.Features.QueueVehicles.Commands
             _repository = repository;
         }
 
-        public async Task<bool> Handle(DeleteQueueVehicleCommand request, CancellationToken cancellationToken)
+        public async Task<Result<bool>> Handle(DeleteQueueVehicleCommand request, CancellationToken cancellationToken)
         {
-            return await _repository.DeleteQueueVehicleAsync(request.IdAssignQueue);
+            var deleted = await _repository.DeleteQueueVehicleAsync(request.IdAssignQueue);
+            return Result<bool>.Success(deleted);
         }
     }
 }

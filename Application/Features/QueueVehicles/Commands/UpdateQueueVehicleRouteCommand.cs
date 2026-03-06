@@ -1,12 +1,13 @@
+using Application.Common;
 using Application.DTOs.QueueVehicles;
 using Application.Interfaces.QueueVehicles;
 using MediatR;
 
 namespace Application.Features.QueueVehicles.Commands
 {
-    public record UpdateQueueVehicleRouteCommand(UpdateRouteQueueVehicleDto UpdateRouteDto) : IRequest<bool>;
+    public record UpdateQueueVehicleRouteCommand(UpdateRouteQueueVehicleDto UpdateRouteDto) : IRequest<Result<bool>>;
 
-    public class UpdateQueueVehicleRouteHandler : IRequestHandler<UpdateQueueVehicleRouteCommand, bool>
+    public class UpdateQueueVehicleRouteHandler : IRequestHandler<UpdateQueueVehicleRouteCommand, Result<bool>>
     {
         private readonly IUpdateQueueVehicleRouteRepository _repository;
 
@@ -15,9 +16,10 @@ namespace Application.Features.QueueVehicles.Commands
             _repository = repository;
         }
 
-        public async Task<bool> Handle(UpdateQueueVehicleRouteCommand request, CancellationToken cancellationToken)
+        public async Task<Result<bool>> Handle(UpdateQueueVehicleRouteCommand request, CancellationToken cancellationToken)
         {
-            return await _repository.UpdateQueueVehicleRouteAsync(request.UpdateRouteDto);
+            var updated = await _repository.UpdateQueueVehicleRouteAsync(request.UpdateRouteDto);
+            return Result<bool>.Success(updated);
         }
     }
 }

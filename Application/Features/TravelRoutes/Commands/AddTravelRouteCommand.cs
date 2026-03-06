@@ -1,22 +1,22 @@
-// rutas=darwin Contiene la orden "Agregar Ruta" y el cocinero (Handler) que sabe usar el repositorio para hacerlo.
+// rutas=darwin
+using Application.Common;
 using Application.DTOs;
 using Application.Interfaces;
 using MediatR;
 
 namespace Application.Features.TravelRoutes.Commands
 {
-    // El Pedido
-    public record AddTravelRouteCommand(AddTravelRouteDto addTravelRouteDto) : IRequest<int>;
+    public record AddTravelRouteCommand(AddTravelRouteDto addTravelRouteDto) : IRequest<Result<int>>;
 
-    // El Cocinero
-    public class AddTravelRouteHandler : IRequestHandler<AddTravelRouteCommand, int>
+    public class AddTravelRouteHandler : IRequestHandler<AddTravelRouteCommand, Result<int>>
     {
         private readonly IAddTravelRouteRepository _repository;
         public AddTravelRouteHandler(IAddTravelRouteRepository repository) => _repository = repository;
 
-        public async Task<int> Handle(AddTravelRouteCommand request, CancellationToken ct)
+        public async Task<Result<int>> Handle(AddTravelRouteCommand request, CancellationToken ct)
         {
-            return await _repository.AddTravelRoute(request.addTravelRouteDto);
+            var id = await _repository.AddTravelRoute(request.addTravelRouteDto);
+            return Result<int>.Success(id);
         }
     }
 }

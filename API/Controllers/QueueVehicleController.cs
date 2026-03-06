@@ -1,6 +1,7 @@
 using Application.DTOs.QueueVehicles;
 using Application.Features.QueueVehicles.Commands;
 using Application.Features.QueueVehicles.Queries;
+using Application.Features.QueueVehicles.Queries.GetDriverQueueInfo;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -30,9 +31,8 @@ namespace API.Controllers
         [HttpGet("getDriverQueueInfo/{dni}")]
         public async Task<IActionResult> GetDriverQueueInfo(string dni)
         {
-            var result = await _mediator.Send(new Application.Features.QueueVehicles.Queries.GetDriverQueueInfo.GetDriverQueueInfoQuery(dni));
-            if (result == null) return NotFound("Chofer no encontrado.");
-            return Ok(result);
+            var result = await _mediator.Send(new GetDriverQueueInfoQuery(dni));
+            return Ok(result); // Result<T>.isSuccess = false when not found — no need for 404
         }
 
         [HttpPut("updateRoute")]
@@ -46,7 +46,6 @@ namespace API.Controllers
         public async Task<IActionResult> Delete(int id)
         {
             var result = await _mediator.Send(new DeleteQueueVehicleCommand(id));
-            if (!result) return NotFound();
             return Ok(result);
         }
     }
