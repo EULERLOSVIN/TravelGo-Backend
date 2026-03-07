@@ -11,7 +11,11 @@ public partial class AssignQueue
 
     public int IdVehicle { get; set; }
 
+    public int IdTravelRoute { get; set; }
+
     public virtual QueueVehicle IdQueueVehicleNavigation { get; set; } = null!;
+
+    public virtual TravelRoute IdTravelRouteNavigation { get; set; } = null!;
 
     public virtual Vehicle IdVehicleNavigation { get; set; } = null!;
 }

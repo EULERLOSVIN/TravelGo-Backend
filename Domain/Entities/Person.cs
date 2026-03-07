@@ -21,6 +21,8 @@ public partial class Person
 
     public virtual ICollection<Billing> Billings { get; set; } = new List<Billing>();
 
+    public virtual ICollection<DocumentDriver> DocumentDrivers { get; set; } = new List<DocumentDriver>();
+
     public virtual TypeDocument IdTypeDocumentNavigation { get; set; } = null!;
 
     public virtual ICollection<Notification> Notifications { get; set; } = new List<Notification>();

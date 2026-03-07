@@ -5,18 +5,20 @@ using Application.Interfaces.Customers;
 using Application.Interfaces.Driver;
 using Application.Interfaces.Headquarters;
 using Application.Interfaces.ManagementUser;
-using Application.Interfaces.vehicles;
 using Application.Interfaces.ManageSales;
+using Application.Interfaces.Routes;
+using Application.Interfaces.vehicles;
 using Infrastructure.ExternalServices;
 using Microsoft.EntityFrameworkCore;
 using Persistence.Context;
 using Persistence.Repositories;
 using Persistence.Repositories.Booking;
 using Persistence.Repositories.Customers;
-using Persistence.Repositories.vehicles;
 using Persistence.Repositories.Driver;
 using Persistence.Repositories.Headquarters;
 using Persistence.Repositories.ManageSales;
+using Persistence.Repositories.Routes;
+using Persistence.Repositories.vehicles;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -62,12 +64,11 @@ builder.Services.AddScoped<IGetSalesRepository, GetSalesRepository>();
 //BOOKING
 builder.Services.AddScoped<IGetSeatRepository, GetSeatRepository>();
 
-<<<<<<< HEAD
-=======
+
 //TRIPS
 builder.Services.AddScoped<IStartingOrderRepository, StartingOrderRepository>();
 builder.Services.AddScoped<ITripsRepository, TripsRepository>();
->>>>>>> Euler
+
 
 // Lugares (Places)
 builder.Services.AddScoped<IAddPlaceRepository, AddPlaceRepository>();
@@ -76,6 +77,9 @@ builder.Services.AddScoped<IUpdatePlaceRepository, UpdatePlaceRepository>();
 builder.Services.AddScoped<IDeletePlaceRepository, DeletePlaceRepository>();
 builder.Services.AddScoped<IGenerateUniqueEmailRepository, GenerateUniqueEmailRepository>();
 builder.Services.AddScoped<IHeadquarterRepository, HeadquarterRepository>();
+
+//Routes
+builder.Services.AddScoped<IRouteRepository, RouteRepository>();
 
 //MANAGE SALES
 builder.Services.AddScoped<IGetFilterRepository, GetFilterRepository>();

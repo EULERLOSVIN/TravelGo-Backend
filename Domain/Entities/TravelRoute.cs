@@ -17,6 +17,8 @@ public partial class TravelRoute
 
     public bool IsActive { get; set; }
 
+    public virtual ICollection<AssignQueue> AssignQueues { get; set; } = new List<AssignQueue>();
+
     public virtual ICollection<DepartureTime> DepartureTimes { get; set; } = new List<DepartureTime>();
 
     public virtual Place IdPlaceANavigation { get; set; } = null!;

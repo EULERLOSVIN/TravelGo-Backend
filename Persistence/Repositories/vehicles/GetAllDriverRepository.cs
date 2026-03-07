@@ -24,7 +24,8 @@ namespace Persistence.Repositories.vehicles
                 .Select(p => new PersonDto
                 {
                     IdPerson = p.IdPerson,
-                    Name = p.FirstName
+                    FirstName = p.FirstName,
+                    LastName = p.LastName
                 })
                 .ToListAsync();
 

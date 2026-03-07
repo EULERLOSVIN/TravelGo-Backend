@@ -13,7 +13,5 @@ public partial class DetailVehicle
 
     public string? VehicleType { get; set; }
 
-    public string? Color { get; set; }
-
     public virtual Vehicle IdVehicleNavigation { get; set; } = null!;
 }

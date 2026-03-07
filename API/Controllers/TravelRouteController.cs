@@ -1,6 +1,5 @@
 
 using Application.DTOs;
-using Application.Features.Authentication.Commands;
 using Application.Features.Booking.Queries;
 using Application.Features.TravelRoutes.Commands;
 using Application.Features.TravelRoutes.Queries;
@@ -67,5 +66,17 @@ namespace API.Controllers
             }
             return BadRequest(result);
         }
+
+        //[HttpGet("GetAllRoutes")]
+        //public async Task<IActionResult> GetAllRoutes()
+        //{
+        //    var result = await _mediator.Send(new GetAllRoutesQuery());
+
+        //    if (result.IsSuccess)
+        //    {
+        //        return Ok(result);
+        //    }
+        //    return BadRequest(result);
+        //}
     }
 }

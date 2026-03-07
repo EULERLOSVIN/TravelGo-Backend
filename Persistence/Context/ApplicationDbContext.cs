@@ -30,6 +30,8 @@ public partial class ApplicationDbContext : DbContext
 
     public virtual DbSet<DetailVehicle> DetailVehicles { get; set; }
 
+    public virtual DbSet<DocumentDriver> DocumentDrivers { get; set; }
+
     public virtual DbSet<DocumentVehicle> DocumentVehicles { get; set; }
 
     public virtual DbSet<Headquarter> Headquarters { get; set; }
@@ -74,9 +76,7 @@ public partial class ApplicationDbContext : DbContext
 
     public virtual DbSet<VehicleState> VehicleStates { get; set; }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("Server=servidor-sql.ccjikiaksg0w.us-east-1.rds.amazonaws.com;Database=DbTravelGo;User Id=admin;Password=martinez1234;Encrypt=True;TrustServerCertificate=True;");
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) { }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -123,12 +123,18 @@ public partial class ApplicationDbContext : DbContext
 
             entity.Property(e => e.IdAssignQueue).HasColumnName("idAssignQueue");
             entity.Property(e => e.IdQueueVehicle).HasColumnName("idQueueVehicle");
+            entity.Property(e => e.IdTravelRoute).HasColumnName("idTravelRoute");
             entity.Property(e => e.IdVehicle).HasColumnName("idVehicle");
 
             entity.HasOne(d => d.IdQueueVehicleNavigation).WithMany(p => p.AssignQueues)
                 .HasForeignKey(d => d.IdQueueVehicle)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_AssignQueue_QueueVehicle");
+
+            entity.HasOne(d => d.IdTravelRouteNavigation).WithMany(p => p.AssignQueues)
+                .HasForeignKey(d => d.IdTravelRoute)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_AssignQueue_TravelRoute");
 
             entity.HasOne(d => d.IdVehicleNavigation).WithMany(p => p.AssignQueues)
                 .HasForeignKey(d => d.IdVehicle)
@@ -257,9 +263,6 @@ public partial class ApplicationDbContext : DbContext
             entity.ToTable("DetailVehicle");
 
             entity.Property(e => e.IdDetailVehicle).HasColumnName("idDetailVehicle");
-            entity.Property(e => e.Color)
-                .HasMaxLength(20)
-                .HasColumnName("color");
             entity.Property(e => e.IdVehicle).HasColumnName("idVehicle");
             entity.Property(e => e.SeatNumber).HasColumnName("seatNumber");
             entity.Property(e => e.VehicleType)
@@ -272,6 +275,22 @@ public partial class ApplicationDbContext : DbContext
                 .HasConstraintName("FK_DetailVehicle_Vehicle");
         });
 
+        modelBuilder.Entity<DocumentDriver>(entity =>
+        {
+            entity.HasKey(e => e.IdDocumentDriver).HasName("PK__Document__2287E31C60A783D0");
+
+            entity.ToTable("DocumentDriver");
+
+            entity.Property(e => e.IdDocumentDriver).HasColumnName("idDocumentDriver");
+            entity.Property(e => e.IdPerson).HasColumnName("idPerson");
+            entity.Property(e => e.LicenseExpirationDate).HasColumnName("licenseExpirationDate");
+
+            entity.HasOne(d => d.IdPersonNavigation).WithMany(p => p.DocumentDrivers)
+                .HasForeignKey(d => d.IdPerson)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_DocumentDriver_Person");
+        });
+
         modelBuilder.Entity<DocumentVehicle>(entity =>
         {
             entity.HasKey(e => e.IdDocumentVehicle).HasName("PK__Document__61EE4615336FC427");
@@ -279,8 +298,8 @@ public partial class ApplicationDbContext : DbContext
             entity.ToTable("DocumentVehicle");
 
             entity.Property(e => e.IdDocumentVehicle).HasColumnName("idDocumentVehicle");
-            entity.Property(e => e.ExpirationDate).HasColumnName("expirationDate");
             entity.Property(e => e.IdVehicle).HasColumnName("idVehicle");
+            entity.Property(e => e.SoatExpirationDate).HasColumnName("soatExpirationDate");
 
             entity.HasOne(d => d.IdVehicleNavigation).WithMany(p => p.DocumentVehicles)
                 .HasForeignKey(d => d.IdVehicle)
@@ -437,8 +456,15 @@ public partial class ApplicationDbContext : DbContext
 
             entity.ToTable("QueueVehicle");
 
+            entity.HasIndex(e => e.IdDepartureTime, "IX_QueueVehicle_idDepartureTime");
+
             entity.Property(e => e.IdQueueVehicle).HasColumnName("idQueueVehicle");
+            entity.Property(e => e.IdDepartureTime).HasColumnName("idDepartureTime");
             entity.Property(e => e.Number).HasColumnName("number");
+
+            entity.HasOne(d => d.IdDepartureTimeNavigation).WithMany(p => p.QueueVehicles)
+                .HasForeignKey(d => d.IdDepartureTime)
+                .HasConstraintName("FK_QueueVehicle_DepartureTime");
         });
 
         modelBuilder.Entity<Role>(entity =>
