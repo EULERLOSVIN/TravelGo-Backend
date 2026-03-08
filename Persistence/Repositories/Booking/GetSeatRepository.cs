@@ -1,3 +1,4 @@
+using Domain.Entities;
 ﻿
 using Application.DTOs.Headquarters;
 using Application.Interfaces.Booking;

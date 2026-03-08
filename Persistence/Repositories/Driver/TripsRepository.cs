@@ -1,3 +1,4 @@
+using Domain.Entities;
 ﻿
 using Application.DTOs.Driver;
 using Application.Interfaces.Driver;

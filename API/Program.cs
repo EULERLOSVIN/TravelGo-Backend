@@ -1,5 +1,7 @@
 ﻿using Application.Features.Authentication.Commands;
 using Application.Interfaces;
+using Application.Interfaces.Settings;
+ 
 using Application.Interfaces.Booking;
 using Application.Interfaces.Customers;
 using Application.Interfaces.Driver;
@@ -16,9 +18,21 @@ using Persistence.Repositories.Booking;
 using Persistence.Repositories.Customers;
 using Persistence.Repositories.Driver;
 using Persistence.Repositories.Headquarters;
+
+using Persistence.Repositories.Settings;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+
 using Persistence.Repositories.ManageSales;
 using Persistence.Repositories.Routes;
 using Persistence.Repositories.vehicles;
+using Application.Interfaces.QueueVehicles;
+using Persistence.Repositories.QueueVehicles;
+using Application.Interfaces.DepartureTimes;
+using Persistence.Repositories.DepartureTimes;
+
+ 
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -81,9 +95,24 @@ builder.Services.AddScoped<IHeadquarterRepository, HeadquarterRepository>();
 //Routes
 builder.Services.AddScoped<IRouteRepository, RouteRepository>();
 
+// Settings
+builder.Services.AddScoped<ISettingCompanyRepository, SettingCompanyRepository>();
+builder.Services.AddScoped<IProfileRepository, ProfileRepository>();
+
 //MANAGE SALES
 builder.Services.AddScoped<IGetFilterRepository, GetFilterRepository>();
 
+// QUEUE VEHICLES
+builder.Services.AddScoped<IAddQueueVehicleRepository, AddQueueVehicleRepository>();
+builder.Services.AddScoped<IDeleteQueueVehicleRepository, DeleteQueueVehicleRepository>();
+builder.Services.AddScoped<IGetActiveQueueRepository, GetActiveQueueRepository>();
+builder.Services.AddScoped<IGetDriverQueueInfoRepository, GetDriverQueueInfoRepository>();
+builder.Services.AddScoped<IUpdateQueueVehicleRouteRepository, UpdateQueueVehicleRouteRepository>();
+
+// DEPARTURE TIMES
+builder.Services.AddScoped<IAddDepartureTimeRepository, AddDepartureTimeRepository>();
+builder.Services.AddScoped<IDeleteDepartureTimeRepository, DeleteDepartureTimeRepository>();
+builder.Services.AddScoped<IGetDepartureTimesByRouteRepository, GetDepartureTimesByRouteRepository>();
 // 4. Conexión a SQL Server en AWS RDS
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
@@ -95,6 +124,21 @@ builder.Services.AddHttpClient<IReniecService, ApisPeruService>(client =>
     // Opcional: Configurar tiempos de espera
     client.Timeout = TimeSpan.FromSeconds(10);
 });
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = builder.Configuration["Jwt:Issuer"],
+            ValidAudience = builder.Configuration["Jwt:Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"] ?? string.Empty))
+        };
+    });
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -113,6 +157,7 @@ if (app.Environment.IsDevelopment())
 app.UseCors("TravelGoPolicy");
 
 app.UseHttpsRedirection();
+app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 

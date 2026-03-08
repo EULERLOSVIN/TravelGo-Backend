@@ -1,3 +1,4 @@
+using Domain.Entities;
 // places=darwin
 using Application.DTOs;
 using Application.Interfaces;

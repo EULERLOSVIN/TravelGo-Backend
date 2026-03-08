@@ -7,6 +7,7 @@ using Persistence.Context;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using Domain.Entities;
 
 namespace Persistence.Repositories
 {
@@ -40,10 +41,11 @@ namespace Persistence.Repositories
 
             return new LoginResponseDto
             {
+                // Se retorna el IdAccount para que el FrontEnd (ej. Mi Perfil) sepa qué cuenta buscar en la base de datos
+                IdAccount = account.IdAccount,
                 Token = token,
                 Email = account.Email,
-                Rol = account.IdRoleNavigation?.Name ?? "Sin Rol",
-                IdAccount = account.IdAccount
+                Rol = account.IdRoleNavigation?.Name ?? "Sin Rol"
             };
         }
 

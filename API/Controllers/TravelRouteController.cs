@@ -33,7 +33,6 @@ namespace API.Controllers
         public async Task<IActionResult> Update([FromBody] UpdateTravelRouteDto dto)
         {
             var result = await _mediator.Send(new UpdateTravelRouteCommand(dto));
-            if (!result) return NotFound();
             return Ok(result);
         }
 
@@ -41,7 +40,6 @@ namespace API.Controllers
         public async Task<IActionResult> Delete(int id)
         {
             var result = await _mediator.Send(new DeleteTravelRouteCommand(id));
-            if (!result) return NotFound();
             return Ok(result);
         }
 
@@ -49,22 +47,14 @@ namespace API.Controllers
         public async Task<IActionResult> GetPlacesOfRoutes()
         {
             var result = await _mediator.Send(new GetAllPlaceOfRouteQuery());
-            if (result.IsSuccess)
-            {
-                return Ok(result);
-            }
-           return BadRequest(result);
+            return Ok(result);
         }
 
         [HttpGet("getRoutesByPlace")]
         public async Task<IActionResult> SerachRoutesByPlace([FromQuery] SearchRouteByPlaceQuery query)
         {
             var result = await _mediator.Send(query);
-            if (result.IsSuccess)
-            {
-                return Ok(result);
-            }
-            return BadRequest(result);
+            return Ok(result);
         }
 
         //[HttpGet("GetAllRoutes")]
