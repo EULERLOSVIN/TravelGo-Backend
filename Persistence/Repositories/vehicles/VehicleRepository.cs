@@ -3,12 +3,13 @@ using Application.DTOs.Vehicles;
 using Application.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Persistence.Context;
+using Application.DTOs.vehicles;
 
 namespace Persistence.Repositories;
 
 public class VehicleRepository : IVehicleRepository
 {
-    private readonly ApplicationDbContext _context; // cambia si tu DbContext se llama distinto
+    private readonly ApplicationDbContext _context;
 
     public VehicleRepository(ApplicationDbContext context)
     {
@@ -139,48 +140,6 @@ public class VehicleRepository : IVehicleRepository
                          ? v.DocumentVehicles.FirstOrDefault().SoatExpirationDate
                          : default(DateOnly)
             }).ToListAsync();
-    }
-
-    public async Task<bool> DeleteVehicleAsync(string unitId)
-    {
-        int idVehiculo = int.Parse(unitId.Replace("U-", ""));
-
-        using var transaction = await _context.Database.BeginTransactionAsync();
-
-        try
-        {
-        var vehicle = await _context.Vehicles
-            .FirstOrDefaultAsync(v => v.IdVehicle == idVehiculo);
-
-        if (vehicle == null)
-            return false;
-
-        var details = await _context.DetailVehicles
-            .Where(d => d.IdVehicle == idVehiculo)
-            .ToListAsync();
-
-        var documents = await _context.DocumentVehicles
-            .Where(d => d.IdVehicle == idVehiculo)
-            .ToListAsync();
-
-        if (documents.Any())
-            _context.DocumentVehicles.RemoveRange(documents);
-
-        if (details.Any())
-            _context.DetailVehicles.RemoveRange(details);
-
-        _context.Vehicles.Remove(vehicle);
-
-        await _context.SaveChangesAsync();
-        await transaction.CommitAsync();
-
-        return true;
-        }
-        catch
-        {
-        await transaction.RollbackAsync();
-        throw;
-        }
     }
 }
 
