@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Domain.Entities;
+namespace Persistence;
 
 public partial class TravelRoute
 {
@@ -16,6 +16,8 @@ public partial class TravelRoute
     public decimal? Price { get; set; }
 
     public bool IsActive { get; set; }
+
+    public virtual ICollection<AssignQueue> AssignQueues { get; set; } = new List<AssignQueue>();
 
     public virtual ICollection<DepartureTime> DepartureTimes { get; set; } = new List<DepartureTime>();
 

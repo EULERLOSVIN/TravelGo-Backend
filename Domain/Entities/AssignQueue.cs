@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Domain.Entities;
+namespace Persistence;
 
 public partial class AssignQueue
 {
@@ -15,7 +15,7 @@ public partial class AssignQueue
 
     public virtual QueueVehicle IdQueueVehicleNavigation { get; set; } = null!;
 
-    public virtual Vehicle IdVehicleNavigation { get; set; } = null!;
-
     public virtual TravelRoute IdTravelRouteNavigation { get; set; } = null!;
+
+    public virtual Vehicle IdVehicleNavigation { get; set; } = null!;
 }

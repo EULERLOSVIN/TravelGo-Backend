@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Domain.Entities;
+namespace Persistence;
 
 public partial class Person
 {
@@ -20,6 +20,8 @@ public partial class Person
     public virtual ICollection<Account> Accounts { get; set; } = new List<Account>();
 
     public virtual ICollection<Billing> Billings { get; set; } = new List<Billing>();
+
+    public virtual ICollection<DocumentDriver> DocumentDrivers { get; set; } = new List<DocumentDriver>();
 
     public virtual TypeDocument IdTypeDocumentNavigation { get; set; } = null!;
 

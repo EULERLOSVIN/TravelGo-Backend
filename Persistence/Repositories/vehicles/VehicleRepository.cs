@@ -96,13 +96,13 @@ public class VehicleRepository : IVehicleRepository
             _context.DetailVehicles.Add(detail);
 
             // 3️⃣ DOCUMENT
-            var document = new DocumentVehicle
-            {
-                IdVehicle = vehicle.IdVehicle,
-                ExpirationDate = dto.SoatExpiry
-            };
+            //var document = new DocumentVehicle
+            //{
+            //    IdVehicle = vehicle.IdVehicle,
+            //    ExpirationDate = dto.SoatExpiry
+            //};
 
-            _context.DocumentVehicles.Add(document);
+            //_context.DocumentVehicles.Add(document);
 
             await _context.SaveChangesAsync();
             await transaction.CommitAsync();
@@ -199,10 +199,6 @@ public class VehicleRepository : IVehicleRepository
             var document = await _context.DocumentVehicles
                 .FirstOrDefaultAsync(d => d.IdVehicle == idVehiculo);
 
-            if (document != null)
-            {
-                document.ExpirationDate = dto.SoatExpiry;
-            }
 
             await _context.SaveChangesAsync();
             await transaction.CommitAsync();

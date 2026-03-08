@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Domain.Entities;
+namespace Persistence;
 
 public partial class DetailVehicle
 {
@@ -12,8 +12,6 @@ public partial class DetailVehicle
     public int SeatNumber { get; set; }
 
     public string? VehicleType { get; set; }
-
-    public string? Color { get; set; }
 
     public virtual Vehicle IdVehicleNavigation { get; set; } = null!;
 }
