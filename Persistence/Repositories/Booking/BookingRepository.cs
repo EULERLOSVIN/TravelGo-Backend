@@ -67,7 +67,7 @@ namespace Persistence.Repositories.Booking
                 var billing = new Billing
                 {
                     IdPerson = person.IdPerson,
-                    IdCompany = 1,
+                    IdCompany = 2,
                     IdPaymentMethod = idMethodPayment,
                     BillingDate = DateTime.Now,
                     TotalAmount = dto.FullPayment,

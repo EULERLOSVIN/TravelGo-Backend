@@ -1,5 +1,3 @@
-using Domain.Entities;
-﻿
 using Application.DTOs.Customers;
 using Application.Interfaces.Booking;
 using Microsoft.EntityFrameworkCore;
@@ -15,7 +13,7 @@ namespace Persistence.Repositories.Booking
         {
             _context = context;
         }
-
+        // restantes
         public async Task<List<DepartureTimeDto>> GetRemainingDepartureTimes(int idRuta)
         {
             TimeOnly currentTime = TimeOnly.FromDateTime(DateTime.Now);

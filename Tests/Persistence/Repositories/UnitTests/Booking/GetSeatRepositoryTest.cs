@@ -10,7 +10,7 @@ namespace Tests.Persistence.Repositories.UnitTests.Booking
     public class GetSeatRepositoryTest
     {
        private ApplicationDbContext GetInMemoryContext()
-        {
+       {
             var options = new DbContextOptionsBuilder<ApplicationDbContext>()
                 .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
                 .ConfigureWarnings(x => x.Ignore(InMemoryEventId.TransactionIgnoredWarning))
@@ -59,10 +59,9 @@ namespace Tests.Persistence.Repositories.UnitTests.Booking
             IGetSeatRepository repository = new GetSeatRepository(context);
 
             // ACT
-            var result = await repository.GetSeatByIdOfVehicle(999); // ID inexistente
+            var result = await repository.GetSeatByIdOfVehicle(999);
 
             // ASSERT
-            // Nota: EF Core ToListAsync siempre devuelve una lista vacía, nunca null
             Assert.NotNull(result);
             Assert.Empty(result);
         }
