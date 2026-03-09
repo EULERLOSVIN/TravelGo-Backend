@@ -5,6 +5,6 @@ namespace Application.Interfaces.QueueVehicles
 {
     public interface IGetActiveQueueRepository
     {
-        Task<Result<List<QueueVehicleResponseDto>>> GetActiveQueueAsync(int idRoute, bool IsArrival = false);
+        Task<Result<List<QueueVehicleResponseDto>>> GetActiveQueueAsync(int idHeadquarter, int idRoute, bool isArrival);
     }
 }

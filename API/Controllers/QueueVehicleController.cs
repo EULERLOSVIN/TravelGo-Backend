@@ -25,10 +25,12 @@ namespace API.Controllers
 
         // Now filters by idRoute (direct FK that exists in AssignQueue)
         // Added isArrival support to show incoming vehicles
-        [HttpGet("getActiveQueue/{idRoute}")]
-        public async Task<IActionResult> GetActiveQueue(int idRoute, [FromQuery] bool isArrival = false)
+        // Now filters by both idHeadquarter and idRoute for strict isolation
+        // Added isArrival support to show incoming vehicles for this specific HQ
+        [HttpGet("getActiveQueue/{idHeadquarter}/{idRoute}")]
+        public async Task<IActionResult> GetActiveQueue(int idHeadquarter, int idRoute, [FromQuery] bool isArrival = false)
         {
-            var result = await _mediator.Send(new GetActiveQueueQuery(idRoute, isArrival));
+            var result = await _mediator.Send(new GetActiveQueueQuery(idHeadquarter, idRoute, isArrival));
             return Ok(result);
         }
 

@@ -49,14 +49,33 @@ namespace Persistence.Repositories.QueueVehicles
 
             var travelRoutes = await travelRoutesQuery.ToListAsync();
 
-            return travelRoutes.Select(r => {
-                // In Departure view (from this HQ), we show "To Destino"
-                // In Arrival view (En Ruta towards this HQ), we show "From Origen"
+            var result = new List<TravelRouteDto>();
+
+            foreach (var r in travelRoutes)
+            {
                 var displayName = isArrival 
                     ? $"Desde {r.IdPlaceANavigation?.Name ?? "Origen"}" 
                     : $"Hacia {r.IdPlaceBNavigation?.Name ?? "Destino"}";
 
-                return new TravelRouteDto
+                int count;
+                if (isArrival)
+                {
+                    // RESTORE STABLE LOGIC: Link Trip -> Vehicle -> Person -> RouteAssignment -> Route
+                    // This identifies vehicles currently "En Ruta" that belong to this route's assignment.
+                    count = await _context.Trips
+                        .AsNoTracking()
+                        .CountAsync(t => t.IdStateTrip == 1 && 
+                                        _context.RouteAssignments.Any(ra => ra.IdTravelRoute == r.IdTravelRoute && 
+                                                                           _context.Vehicles.Any(v => v.IdVehicle == t.IdVehicle && v.IdPerson == ra.IdPerson)));
+                }
+                else
+                {
+                    count = await _context.AssignQueues
+                        .AsNoTracking()
+                        .CountAsync(aq => aq.IdTravelRoute == r.IdTravelRoute);
+                }
+
+                result.Add(new TravelRouteDto
                 {
                     idTravelRoute = r.IdTravelRoute,
                     nameRoute = displayName,
@@ -64,11 +83,11 @@ namespace Persistence.Repositories.QueueVehicles
                     idPlaceA = r.IdPlaceA,
                     idPlaceB = r.IdPlaceB,
                     isActive = r.IsActive,
-                    inQueueCount = isArrival 
-                        ? _context.Trips.AsNoTracking().Count(t => t.IdStateTrip == 1 && _context.RouteAssignments.Any(ra => ra.IdTravelRoute == r.IdTravelRoute && _context.Vehicles.Any(v => v.IdVehicle == t.IdVehicle && v.IdPerson == ra.IdPerson)))
-                        : _context.AssignQueues.AsNoTracking().Count(aq => aq.IdTravelRoute == r.IdTravelRoute)
-                };
-            }).ToList();
+                    inQueueCount = count
+                });
+            }
+
+            return result;
         }
 
         private List<int> GetMatchingPlaceIds(Headquarter h, List<Place> places)
