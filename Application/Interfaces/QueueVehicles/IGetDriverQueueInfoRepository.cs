@@ -1,9 +1,10 @@
+using Application.Common;
 using Application.DTOs.QueueVehicles;
 
 namespace Application.Interfaces.QueueVehicles
 {
     public interface IGetDriverQueueInfoRepository
     {
-        Task<DriverQueueInfoDto?> GetDriverQueueInfoAsync(string dni);
+        Task<Result<DriverQueueInfoDto>> GetDriverQueueInfoAsync(string dni);
     }
 }

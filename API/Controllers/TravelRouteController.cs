@@ -57,6 +57,13 @@ namespace API.Controllers
             return Ok(result);
         }
 
+        [HttpGet("getRoutesByHeadquarter/{idHeadquarter}")]
+        public async Task<IActionResult> GetRoutesByHeadquarter(int idHeadquarter, [FromQuery] string type = "departure")
+        {
+            var result = await _mediator.Send(new GetRoutesByHeadquarterQuery(idHeadquarter, type));
+            return Ok(result);
+        }
+
         //[HttpGet("GetAllRoutes")]
         //public async Task<IActionResult> GetAllRoutes()
         //{

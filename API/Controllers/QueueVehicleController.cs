@@ -1,5 +1,7 @@
+using Application.Common;
 using Application.DTOs.QueueVehicles;
 using Application.Features.QueueVehicles.Commands;
+using Application.Features.QueueVehicles.Commands.DispatchVehicle;
 using Application.Features.QueueVehicles.Queries;
 using Application.Features.QueueVehicles.Queries.GetDriverQueueInfo;
 using MediatR;
@@ -21,10 +23,19 @@ namespace API.Controllers
             return Ok(result);
         }
 
-        [HttpGet("getActiveQueue/{idHeadquarter}")]
-        public async Task<IActionResult> GetActiveQueue(int idHeadquarter)
+        // Now filters by idRoute (direct FK that exists in AssignQueue)
+        // Added isArrival support to show incoming vehicles
+        [HttpGet("getActiveQueue/{idRoute}")]
+        public async Task<IActionResult> GetActiveQueue(int idRoute, [FromQuery] bool isArrival = false)
         {
-            var result = await _mediator.Send(new GetActiveQueueQuery(idHeadquarter));
+            var result = await _mediator.Send(new GetActiveQueueQuery(idRoute, isArrival));
+            return Ok(result);
+        }
+
+        [HttpPost("dispatch/{idAssignQueue}")]
+        public async Task<IActionResult> Dispatch(int idAssignQueue)
+        {
+            var result = await _mediator.Send(new DispatchVehicleCommand(idAssignQueue));
             return Ok(result);
         }
 
@@ -32,7 +43,7 @@ namespace API.Controllers
         public async Task<IActionResult> GetDriverQueueInfo(string dni)
         {
             var result = await _mediator.Send(new GetDriverQueueInfoQuery(dni));
-            return Ok(result); // Result<T>.isSuccess = false when not found — no need for 404
+            return Ok(result);
         }
 
         [HttpPut("updateRoute")]
@@ -48,5 +59,14 @@ namespace API.Controllers
             var result = await _mediator.Send(new DeleteQueueVehicleCommand(id));
             return Ok(result);
         }
+
+        [HttpPost("registerArrival")]
+        public async Task<IActionResult> RegisterArrival([FromBody] RegisterArrivalDto dto)
+        {
+            var result = await _mediator.Send(new RegisterArrivalCommand(dto.DriverDni));
+            return Ok(result);
+        }
     }
+
+    public record RegisterArrivalDto(string DriverDni);
 }

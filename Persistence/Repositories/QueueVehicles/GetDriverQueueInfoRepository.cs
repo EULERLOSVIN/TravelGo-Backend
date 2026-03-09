@@ -1,3 +1,4 @@
+using Application.Common;
 using Application.DTOs.QueueVehicles;
 using Application.Interfaces.QueueVehicles;
 using Microsoft.EntityFrameworkCore;
@@ -14,21 +15,16 @@ namespace Persistence.Repositories.QueueVehicles
             _context = context;
         }
 
-        public async Task<DriverQueueInfoDto?> GetDriverQueueInfoAsync(string dni)
+        public async Task<Result<DriverQueueInfoDto>> GetDriverQueueInfoAsync(string dni)
         {
-            // First, find the driver by DNI - only return null if driver truly doesn't exist
+            if (string.IsNullOrWhiteSpace(dni)) return Result<DriverQueueInfoDto>.Failure("DNI no proporcionado.");
+            dni = dni.Trim();
+
+            // First, find the driver by DNI
             var person = await _context.People.FirstOrDefaultAsync(p => p.NumberIdentityDocument == dni);
-            if (person == null) return null; // DNI not found -> 404
+            if (person == null) return Result<DriverQueueInfoDto>.Failure("No se encontró ninguna persona con ese DNI.");
 
-            // Security check: only allow drivers (role = "Chofer") to be found
-            var account = await _context.Accounts
-                .Include(a => a.IdRoleNavigation)
-                .FirstOrDefaultAsync(a => a.IdPerson == person.IdPerson);
-
-            if (account == null || account.IdRoleNavigation.Name != "Chofer")
-                return null; // Non-driver roles are treated as not found
-
-            // Build partial DTO with driver name (always returned when person exists)
+            // Build partial DTO with driver name
             var dto = new DriverQueueInfoDto
             {
                 DriverFullName = $"{person.FirstName} {person.LastName}",
@@ -39,9 +35,9 @@ namespace Persistence.Repositories.QueueVehicles
                 AssignedRoutes = new List<DriverRouteDto>()
             };
 
-            // Find their assigned vehicle (optional - driver might not have one yet)
+            // Find their assigned vehicle
             var vehicle = await _context.Vehicles.FirstOrDefaultAsync(v => v.IdPerson == person.IdPerson);
-            if (vehicle == null) return dto; // Driver exists but no vehicle -> return with empty routes
+            if (vehicle == null) return Result<DriverQueueInfoDto>.Success(dto);
 
             dto.IdVehicle = vehicle.IdVehicle;
             dto.VehiclePlate = vehicle.PlateNumber ?? string.Empty;
@@ -58,7 +54,7 @@ namespace Persistence.Repositories.QueueVehicles
                 })
                 .ToListAsync();
 
-            return dto;
+            return Result<DriverQueueInfoDto>.Success(dto);
         }
     }
 }

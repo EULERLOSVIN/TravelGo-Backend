@@ -5,7 +5,7 @@ using MediatR;
 
 namespace Application.Features.QueueVehicles.Queries
 {
-    public record GetActiveQueueQuery(int IdHeadquarter) : IRequest<Result<List<QueueVehicleResponseDto>>>;
+    public record GetActiveQueueQuery(int IdRoute, bool IsArrival = false) : IRequest<Result<List<QueueVehicleResponseDto>>>;
 
     public class GetActiveQueueHandler : IRequestHandler<GetActiveQueueQuery, Result<List<QueueVehicleResponseDto>>>
     {
@@ -18,8 +18,7 @@ namespace Application.Features.QueueVehicles.Queries
 
         public async Task<Result<List<QueueVehicleResponseDto>>> Handle(GetActiveQueueQuery request, CancellationToken cancellationToken)
         {
-            var queue = await _repository.GetActiveQueueAsync(request.IdHeadquarter);
-            return Result<List<QueueVehicleResponseDto>>.Success(queue);
+            return await _repository.GetActiveQueueAsync(request.IdRoute, request.IsArrival);
         }
     }
 }

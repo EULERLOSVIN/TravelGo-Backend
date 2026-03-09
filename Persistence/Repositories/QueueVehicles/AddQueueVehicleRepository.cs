@@ -1,4 +1,5 @@
 using Domain.Entities;
+using Application.Common;
 using Application.DTOs.QueueVehicles;
 using Application.Interfaces.QueueVehicles;
 using Microsoft.EntityFrameworkCore;
@@ -15,27 +16,38 @@ namespace Persistence.Repositories.QueueVehicles
             _context = context;
         }
 
-        public async Task<int> AddQueueVehicleAsync(AddQueueVehicleDto dto)
+        public async Task<Result<int>> AddQueueVehicleAsync(AddQueueVehicleDto dto)
         {
+            var dni = dto.DriverDni?.Trim();
+            if (string.IsNullOrWhiteSpace(dni)) return Result<int>.Failure("DNI no proporcionado.");
+
             // 1. Encuentra a la Persona por el string DriverDni proveído en el DTO
-            var person = await _context.People.FirstOrDefaultAsync(p => p.NumberIdentityDocument == dto.DriverDni);
-            if (person == null) throw new Exception("Chofer no encontrado por DNI.");
+            var person = await _context.People.FirstOrDefaultAsync(p => p.NumberIdentityDocument == dni);
+            if (person == null) return Result<int>.Failure("Chofer no encontrado por DNI.");
 
             // 2. Encuentra al Vehículo amarrado a esa Persona
             var vehicle = await _context.Vehicles.FirstOrDefaultAsync(v => v.IdPerson == person.IdPerson);
-            if (vehicle == null) throw new Exception("Ese chofer no tiene un vehículo registrado.");
+            if (vehicle == null) return Result<int>.Failure("Ese chofer no tiene un vehículo registrado.");
 
             // 3. Verifica si la Ruta a la que se intenta agregar es válida
             var route = await _context.TravelRoutes.FindAsync(dto.IdTravelRoute);
-            if (route == null) throw new Exception("La ruta de destino no existe.");
+            if (route == null) return Result<int>.Failure("La ruta de destino no existe.");
 
-            // 4. (Opcional) Revisar si el carro ya está en la cola para no duplicarlo, o si su VehicleState está disponible
-            // var isAlreadyInQueue = await _context.AssignQueues.AnyAsync(aq => aq.IdVehicle == vehicle.IdVehicle);
-            // if (isAlreadyInQueue) throw new Exception("Este chofer/vehículo ya se encuentra en cola.");
+            // 4. Validar si el vehículo ya está activo en la COLA
+            // CLEAN LOGIC: Solo bloqueamos si ya está esperando en una cola. 
+            // NO bloqueamos si está "En Ruta" (viaje activo), para permitir que se forme para su siguiente viaje.
+            var currentInQueue = await _context.AssignQueues
+                .Include(aq => aq.IdTravelRouteNavigation)
+                .AsNoTracking()
+                .FirstOrDefaultAsync(aq => aq.IdVehicle == vehicle.IdVehicle);
+
+            if (currentInQueue != null)
+            {
+                var routeName = currentInQueue.IdTravelRouteNavigation?.NameRoute ?? "otra ruta";
+                return Result<int>.Failure($"Este vehículo ya se encuentra esperando en la ruta {routeName}.");
+            }
 
             // 5. Crea la instancia de la Cola (Generar el turno)
-            // Por lógica del negocio, "Number" sería el siguiente turno consecutivo,
-            // pero para abreviar lo creamos base y dejamos BD auto-increment.
             var newTurn = 1;
             var lastQueuePushed = await _context.QueueVehicles.OrderByDescending(q => q.IdQueueVehicle).FirstOrDefaultAsync();
             if (lastQueuePushed != null) {
@@ -51,7 +63,7 @@ namespace Persistence.Repositories.QueueVehicles
             await _context.QueueVehicles.AddAsync(queueVehicle);
             await _context.SaveChangesAsync(); // Para conseguir el IdQueueVehicle
 
-            // 6. Crea la asociación entre el Turno Creado y el Carro + (Ruta: Asumiendo que va en RouteAssignment)
+            // 6. Crea la asociación entre el Turno Creado y el Carro + Ruta en RouteAssignment
             var assignQueue = new AssignQueue
             {
                 IdQueueVehicle = queueVehicle.IdQueueVehicle,
@@ -59,10 +71,6 @@ namespace Persistence.Repositories.QueueVehicles
                 IdTravelRoute = dto.IdTravelRoute
             };
 
-            // NOTA: EL ER Model original no tiene "IdTravelRoute" en "AssignQueue". Si la Secretaria DEBE mandar la ruta,
-            // debería modificarse AssignQueue para tener una Foreign Key hacia TravelRoute,
-            // o crear/actualizar "RouteAssignment" de ese IdPerson hacia el dto.IdTravelRoute.
-            // Lo dejaremos preparado como RouteAssignment para cumplir con tu diseño DB.
             var existingRouteAssignment = await _context.RouteAssignments
                 .FirstOrDefaultAsync(r => r.IdPerson == person.IdPerson);
 
@@ -79,7 +87,7 @@ namespace Persistence.Repositories.QueueVehicles
             await _context.AssignQueues.AddAsync(assignQueue);
             await _context.SaveChangesAsync();
 
-            return queueVehicle.IdQueueVehicle;
+            return Result<int>.Success(queueVehicle.IdQueueVehicle);
         }
     }
 }

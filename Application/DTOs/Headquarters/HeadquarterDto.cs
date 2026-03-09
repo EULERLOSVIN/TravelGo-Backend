@@ -18,6 +18,7 @@ namespace Application.DTOs.Headquarters
         public DateTime? RegistrationDate { get; set; }// Nuevo: Para VER cuándo se creó
         public string StateHeadquarter { get; set; } = null!;// Explicación: El frontend no sabe qué es el ID "1" o "2", necesita ver "Activo" o "Inactivo".
         // Por eso aquí devolvemos el STRING (nombre), no el INT (id).
+        public bool HasRoutes { get; set; }
 
     }
 }

@@ -9,5 +9,6 @@ namespace Application.DTOs
         public int idPlaceA { get; set; }
         public int idPlaceB { get; set; }
         public bool isActive { get; set; }
+        public int inQueueCount { get; set; }
     }
 }
