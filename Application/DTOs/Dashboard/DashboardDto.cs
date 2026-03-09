@@ -11,6 +11,14 @@ public class DashboardDto
     public List<UpcomingDepartureDto> UpcomingDepartures { get; set; } = new();
     public List<ActiveAlertDto> ActiveAlerts { get; set; } = new();
     public List<RecentActivityDto> RecentActivity { get; set; } = new();
+    public List<SalesChannelDto> SalesByChannel { get; set; } = new();
+}
+
+public class SalesChannelDto
+{
+    public string ChannelName { get; set; } = null!; // Terminal, Web
+    public int Count { get; set; }
+    public int Percentage { get; set; }
 }
 
 public class DailyMetricsDto

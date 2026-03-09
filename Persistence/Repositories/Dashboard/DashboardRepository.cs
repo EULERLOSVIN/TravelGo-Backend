@@ -20,75 +20,63 @@ public class DashboardRepository : IDashboardRepository
 
     public async Task<DashboardDto> GetDashboardSummaryAsync()
     {
-        var today = DateOnly.FromDateTime(DateTime.Now);
-        var yesterday = today.AddDays(-1);
-        var startOfMonth = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
+        var now = DateTime.Now;
+        var todayStart = now.Date;
+        var tomorrowStart = todayStart.AddDays(1);
+        var yesterdayStart = todayStart.AddDays(-1);
+        var monthStart = new DateTime(now.Year, now.Month, 1);
+        
+        var todayDate = DateOnly.FromDateTime(todayStart);
+        var yesterdayDate = DateOnly.FromDateTime(yesterdayStart);
+        var monthStartDate = DateOnly.FromDateTime(monthStart);
 
-        // 1. Daily Metrics: Income
-        var todayIncome = await _context.Billings
-            .AsNoTracking()
-            .Where(b => DateOnly.FromDateTime(b.BillingDate.Value) == today)
+        // 1. Consolidated Core Metrics (All scalars in 1 execution if EF allows it, else split efficiently)
+        // Income Today & Yesterday
+        var todayIncome = await _context.Billings.AsNoTracking()
+            .Where(b => b.BillingDate >= todayStart && b.BillingDate < tomorrowStart)
+            .SumAsync(b => b.TotalAmount);
+        
+        var yesterdayIncome = await _context.Billings.AsNoTracking()
+            .Where(b => b.BillingDate >= yesterdayStart && b.BillingDate < todayStart)
             .SumAsync(b => b.TotalAmount);
 
-        var yesterdayIncome = await _context.Billings
-            .AsNoTracking()
-            .Where(b => DateOnly.FromDateTime(b.BillingDate.Value) == yesterday)
-            .SumAsync(b => b.TotalAmount);
-
-        int incomeTrend = (yesterdayIncome == 0) ? 0 : (int)((todayIncome - yesterdayIncome) / yesterdayIncome * 100);
-
-        // 2. Daily Metrics: Tickets Sold
-        var todayTickets = await _context.TravelTickets
-            .AsNoTracking()
-            .CountAsync(tt => tt.TravelDate == today);
-
-        var yesterdayTickets = await _context.TravelTickets
-            .AsNoTracking()
-            .CountAsync(tt => tt.TravelDate == yesterday);
-
-        int ticketsTrend = (yesterdayTickets == 0) ? 0 : (int)((float)(todayTickets - yesterdayTickets) / yesterdayTickets * 100);
-
-        // 3. Vehicles in Route vs Queue
-        var inRouteCount = await _context.Trips
-            .AsNoTracking()
-            .CountAsync(t => t.IdStateTrip == 1); // En Ruta
-
-        var inQueueCount = await _context.AssignQueues
-            .AsNoTracking()
+        // Tickets Today & Yesterday
+        var todayTickets = await _context.TravelTickets.AsNoTracking()
+            .Where(tt => tt.TravelDate == todayDate)
+            .CountAsync();
+            
+        var yesterdayTickets = await _context.TravelTickets.AsNoTracking()
+            .Where(tt => tt.TravelDate == yesterdayDate)
             .CountAsync();
 
-        // 4. Occupancy Rate (Simplification for active trips today)
-        var activeTripsToday = await _context.Trips
-            .AsNoTracking()
-            .Include(t => t.IdVehicleNavigation).ThenInclude(v => v.DetailVehicles)
+        // Status Counts
+        var inRouteCount = await _context.Trips.AsNoTracking()
+            .CountAsync(t => t.IdStateTrip == 1);
+            
+        var inQueueCount = await _context.AssignQueues.AsNoTracking()
+            .CountAsync();
+
+        // 2. Optimized Occupancy (Projections only)
+        var occupancyData = await _context.Trips.AsNoTracking()
             .Where(t => t.IdStateTrip == 1)
+            .Select(t => new {
+                Capacity = t.IdVehicleNavigation.DetailVehicles.Select(d => (int?)d.SeatNumber).FirstOrDefault() ?? 1,
+                Sold = _context.TravelTickets.Count(tt => tt.IdVehicle == t.IdVehicle && tt.TravelDate == todayDate)
+            })
             .ToListAsync();
 
-        int avgOccupancy = 0;
-        if (activeTripsToday.Any())
-        {
-            float totalPerc = 0;
-            foreach (var trip in activeTripsToday)
-            {
-                var soldCount = await _context.TravelTickets
-                    .CountAsync(tt => tt.IdVehicle == trip.IdVehicle && tt.TravelDate == today);
-                var totalSeats = trip.IdVehicleNavigation.DetailVehicles.FirstOrDefault()?.SeatNumber ?? 1;
-                totalPerc += (float)soldCount / totalSeats * 100;
-            }
-            avgOccupancy = (int)(totalPerc / activeTripsToday.Count);
-        }
+        int avgOccupancy = occupancyData.Any() 
+            ? (int)occupancyData.Average(x => (float)x.Sold / x.Capacity * 100) 
+            : 0;
 
-        // 5. Top Routes (Month)
-        var topRoutes = await _context.TravelTickets
-            .AsNoTracking()
-            .Include(tt => tt.IdTravelRouteNavigation)
-            .Include(tt => tt.IdBillingNavigation)
-            .Where(tt => tt.TravelDate >= DateOnly.FromDateTime(startOfMonth))
+        // 3. Top Routes (Month) - Optimized grouping
+        var topRoutes = await _context.TravelTickets.AsNoTracking()
+            .Where(tt => tt.TravelDate >= monthStartDate)
             .GroupBy(tt => tt.IdTravelRouteNavigation.NameRoute)
             .Select(g => new RouteProfitabilityDto
             {
                 RouteName = g.Key,
-                TotalIncome = g.Sum(x => x.IdBillingNavigation.TotalAmount)
+                TotalIncome = g.Sum(tt => tt.IdBillingNavigation.TotalAmount)
             })
             .OrderByDescending(x => x.TotalIncome)
             .Take(5)
@@ -100,118 +88,118 @@ public class DashboardRepository : IDashboardRepository
             r.PercentageOfTotal = (totalMonthIncome == 0) ? 0 : (int)(r.TotalIncome / totalMonthIncome * 100);
         }
 
-        // 6. Hourly Demand (Today)
-        var hourlyDemand = await _context.TravelTickets
-            .AsNoTracking()
-            .Include(tt => tt.IdBillingNavigation)
-            .Where(tt => tt.TravelDate == today)
-            .ToListAsync();
-
-        var hourlyData = hourlyDemand
-            .GroupBy(tt => tt.IdBillingNavigation.BillingDate.Value.Hour)
+        // 4. Hourly Demand
+        var hourlyDemand = await _context.Billings.AsNoTracking()
+            .Where(b => b.BillingDate >= todayStart && b.BillingDate < tomorrowStart)
+            .GroupBy(b => b.BillingDate.Value.Hour)
             .Select(g => new HourlyDemandDto
             {
-                Hour = $"{g.Key}:00",
+                Hour = g.Key + ":00",
                 TicketsSold = g.Count()
             })
-            .OrderBy(x => int.Parse(x.Hour.Split(':')[0]))
-            .ToList();
-
-        // 7. Upcoming Departures (Top 5 in queue)
-        var upcoming = await _context.AssignQueues
-            .AsNoTracking()
-            .Include(aq => aq.IdVehicleNavigation).ThenInclude(v => v.IdPersonNavigation)
-            .Include(aq => aq.IdVehicleNavigation).ThenInclude(v => v.DetailVehicles)
-            .Include(aq => aq.IdTravelRouteNavigation).ThenInclude(tr => tr.DepartureTimes)
-            .OrderBy(aq => aq.IdAssignQueue)
-            .Take(5)
+            .OrderByDescending(x => x.TicketsSold)
             .ToListAsync();
 
-        var upcomingList = new List<UpcomingDepartureDto>();
-        foreach (var aq in upcoming)
-        {
-            var driver = aq.IdVehicleNavigation.IdPersonNavigation;
-            var detail = aq.IdVehicleNavigation.DetailVehicles.FirstOrDefault();
-            var soldCount = await _context.TravelTickets.CountAsync(tt => tt.IdVehicle == aq.IdVehicle && tt.TravelDate == today);
-            var totalSeats = detail?.SeatNumber ?? 1;
-            var perc = (int)((float)soldCount / totalSeats * 100);
-
-            upcomingList.Add(new UpcomingDepartureDto
-            {
-                Hour = aq.IdTravelRouteNavigation.DepartureTimes.OrderBy(dt => dt.Hour).FirstOrDefault()?.Hour.ToString("HH:mm") ?? "--:--",
+        // 5. Upcoming Departures (Deep Projection)
+        var upcoming = await _context.AssignQueues.AsNoTracking()
+            .OrderBy(aq => aq.IdAssignQueue)
+            .Take(10)
+            .Select(aq => new {
+                aq.IdVehicle,
                 RouteName = aq.IdTravelRouteNavigation.NameRoute,
-                DriverName = driver != null ? $"{driver.FirstName} {driver.LastName}" : "S/N",
-                PlateNumber = aq.IdVehicleNavigation.PlateNumber,
+                Driver = aq.IdVehicleNavigation.IdPersonNavigation != null 
+                    ? aq.IdVehicleNavigation.IdPersonNavigation.FirstName + " " + aq.IdVehicleNavigation.IdPersonNavigation.LastName 
+                    : "S/N",
+                aq.IdVehicleNavigation.PlateNumber,
+                Capacity = aq.IdVehicleNavigation.DetailVehicles.Select(d => (int?)d.SeatNumber).FirstOrDefault() ?? 1,
+                Sold = _context.TravelTickets.Count(tt => tt.IdVehicle == aq.IdVehicle && tt.TravelDate == todayDate),
+                DepartureTime = aq.IdTravelRouteNavigation.DepartureTimes.OrderBy(dt => dt.Hour).Select(dt => (TimeOnly?)dt.Hour).FirstOrDefault()
+            })
+            .ToListAsync();
+
+        var upcomingList = upcoming.Select(x => {
+            var perc = (int)((float)x.Sold / x.Capacity * 100);
+            return new UpcomingDepartureDto {
+                Hour = x.DepartureTime?.ToString("HH:mm") ?? "--:--",
+                RouteName = x.RouteName,
+                DriverName = x.Driver,
+                PlateNumber = x.PlateNumber,
                 OccupancyPercentage = perc,
                 Status = perc >= 80 ? "Listo" : perc >= 40 ? "Cargando" : "Baja ocupación"
-            });
-        }
+            };
+        }).ToList();
 
-        // 8. Active Alerts (Security)
-        var nextLimit = today.AddMonths(1);
-        var alertSoat = await _context.DocumentVehicles
-            .Include(dv => dv.IdVehicleNavigation)
-            .Where(dv => dv.SoatExpirationDate <= nextLimit && dv.SoatExpirationDate >= today)
-            .Select(dv => new ActiveAlertDto
-            {
+        // 6. Active Alerts (Combined and projected)
+        var limit60Value = todayDate.AddDays(60);
+        var alertSoat = await _context.DocumentVehicles.AsNoTracking()
+            .Where(dv => dv.SoatExpirationDate >= todayDate && dv.SoatExpirationDate <= limit60Value)
+            .Select(dv => new ActiveAlertDto {
                 Type = "SOAT",
-                Description = $"SOAT Unidad {dv.IdVehicleNavigation.PlateNumber} vence pronto.",
-                Severity = (dv.SoatExpirationDate <= today.AddDays(7)) ? "High" : "Medium"
+                Description = "SOAT Unidad " + dv.IdVehicleNavigation.PlateNumber + " vence pronto.",
+                Severity = (dv.SoatExpirationDate <= todayDate.AddDays(15)) ? "High" : "Medium"
             }).ToListAsync();
 
-        var alertLicense = await _context.DocumentDrivers
-            .Include(dd => dd.IdPersonNavigation)
-            .Where(dd => dd.LicenseExpirationDate <= nextLimit && dd.LicenseExpirationDate >= today)
-            .Select(dd => new ActiveAlertDto
-            {
+        var alertLicense = await _context.DocumentDrivers.AsNoTracking()
+            .Where(dd => dd.LicenseExpirationDate >= todayDate && dd.LicenseExpirationDate <= limit60Value)
+            .Select(dd => new ActiveAlertDto {
                 Type = "Licencia",
-                Description = $"Licencia de {dd.IdPersonNavigation.FirstName} vence pronto.",
-                Severity = (dd.LicenseExpirationDate <= today.AddDays(7)) ? "High" : "Medium"
+                Description = "Licencia de " + dd.IdPersonNavigation.FirstName + " vence pronto.",
+                Severity = (dd.LicenseExpirationDate <= todayDate.AddDays(15)) ? "High" : "Medium"
             }).ToListAsync();
 
-        var allAlerts = alertSoat.Concat(alertLicense).ToList();
-
-        // 9. Recent Activity (Latest 10 sales for now)
-        var recentSales = await _context.TravelTickets
-            .AsNoTracking()
-            .Include(tt => tt.IdBillingNavigation)
-            .OrderByDescending(tt => tt.IdBillingNavigation.BillingDate)
-            .Take(10)
-            .Select(tt => new RecentActivityDto
-            {
-                Description = $"Venta de pasaje cod: {tt.TicketCode}",
-                TimeAgo = "", // Handled in frontend or helper
+        // 7. Recent Activity (Minimal projection)
+        var recentSales = await _context.TravelTickets.AsNoTracking()
+            .OrderByDescending(tt => tt.IdBilling)
+            .Take(4)
+            .Select(tt => new RecentActivityDto {
+                Description = "Venta: " + tt.IdTravelRouteNavigation.NameRoute,
                 Type = "Sale",
-                Date = tt.IdBillingNavigation.BillingDate.Value
+                Date = tt.IdBillingNavigation.BillingDate ?? now
             }).ToListAsync();
 
-        foreach (var act in recentSales)
-        {
-            var diff = DateTime.Now - act.Date;
-            if (diff.TotalMinutes < 60) act.TimeAgo = $"Hace {(int)diff.TotalMinutes} min";
-            else if (diff.TotalHours < 24) act.TimeAgo = $"Hace {(int)diff.TotalHours} horas";
-            else act.TimeAgo = $"Hace {(int)diff.TotalDays} días";
+        var recentQueue = await _context.AssignQueues.AsNoTracking()
+            .OrderByDescending(aq => aq.IdAssignQueue)
+            .Take(4)
+            .Select(aq => new RecentActivityDto {
+                Description = "Unidad " + aq.IdVehicleNavigation.PlateNumber + " en fila",
+                Type = "User",
+                Date = now.AddMinutes(-10)
+            }).ToListAsync();
+
+        var allActivity = recentSales.Concat(recentQueue).OrderByDescending(a => a.Date).ToList();
+        foreach (var act in allActivity) {
+            var diff = now - act.Date;
+            if (diff.TotalMinutes < 60) act.TimeAgo = "Hace " + (int)diff.TotalMinutes + "m";
+            else if (diff.TotalHours < 24) act.TimeAgo = "Hace " + (int)diff.TotalHours + "h";
+            else act.TimeAgo = "Hace " + (int)diff.TotalDays + "d";
         }
 
-        return new DashboardDto
-        {
-            DailyMetrics = new DailyMetricsDto
-            {
-                TodayIncome = todayIncome,
-                YesterdayIncome = yesterdayIncome,
-                IncomeTrendPercentage = incomeTrend,
-                TodayTicketsSold = todayTickets,
-                YesterdayTicketsSold = yesterdayTickets,
-                TicketsTrendPercentage = ticketsTrend,
-                OccupancyRate = avgOccupancy,
-                TotalVehiclesInRoute = inRouteCount,
-                TotalVehiclesInQueue = inQueueCount
+        // 8. Sales Channel Grouping
+        var salesStats = await _context.Billings.AsNoTracking()
+            .Where(b => b.BillingDate >= todayStart && b.BillingDate < tomorrowStart)
+            .GroupBy(b => string.IsNullOrEmpty(b.OperationPayCode))
+            .Select(g => new { IsTerminal = g.Key, Count = g.Count() })
+            .ToListAsync();
+
+        int tCount = salesStats.FirstOrDefault(s => s.IsTerminal)?.Count ?? 0;
+        int wCount = salesStats.FirstOrDefault(s => !s.IsTerminal)?.Count ?? 0;
+        int total = tCount + wCount;
+
+        return new DashboardDto {
+            DailyMetrics = new DailyMetricsDto {
+                TodayIncome = todayIncome, YesterdayIncome = yesterdayIncome, IncomeTrendPercentage = (yesterdayIncome == 0) ? 0 : (int)((todayIncome - yesterdayIncome)/yesterdayIncome*100),
+                TodayTicketsSold = todayTickets, YesterdayTicketsSold = yesterdayTickets, TicketsTrendPercentage = (yesterdayTickets == 0) ? 0 : (int)((float)(todayTickets - yesterdayTickets)/yesterdayTickets*100),
+                OccupancyRate = avgOccupancy, TotalVehiclesInRoute = inRouteCount, TotalVehiclesInQueue = inQueueCount
             },
             TopRoutes = topRoutes,
-            HourlyDemand = hourlyData,
+            HourlyDemand = hourlyDemand,
             UpcomingDepartures = upcomingList,
-            ActiveAlerts = allAlerts,
-            RecentActivity = recentSales
+            ActiveAlerts = alertSoat.Concat(alertLicense).OrderBy(a => a.Severity == "High" ? 0 : 1).ToList(),
+            RecentActivity = allActivity,
+            SalesByChannel = new List<SalesChannelDto> {
+                new SalesChannelDto { ChannelName = "Terminal", Count = tCount, Percentage = total == 0 ? 0 : (int)((float)tCount/total*100) },
+                new SalesChannelDto { ChannelName = "Web", Count = wCount, Percentage = total == 0 ? 0 : (int)((float)wCount/total*100) }
+            }
         };
     }
 }
