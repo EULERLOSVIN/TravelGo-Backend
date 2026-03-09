@@ -2,7 +2,6 @@
 using Application.DTOs.Vehicles;
 using Application.Features.vehicles.Comands;
 using Application.Features.vehicles.Queries;
-using Application.Features.Vehicles.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,13 +16,6 @@ public class VehiclesController : ControllerBase
     public VehiclesController(IMediator mediator)
     {
         _mediator = mediator;
-    }
-
-    [HttpGet("summaryStaticsVehicles")]
-    public async Task<IActionResult> GetSummary()
-    {
-        var result = await _mediator.Send(new GetVehicleSummaryQuery());
-        return Ok(result);
     }
 
     [HttpGet("GetDrivers")]
@@ -63,6 +55,28 @@ public class VehiclesController : ControllerBase
     public async Task<IActionResult> GetVehiclesByFilter([FromQuery] FilterVehicleDto Filters)
     {
         var result = await _mediator.Send(new GetVehiclesByFiltersQuery(Filters));
+        if (result.IsSuccess)
+        {
+            return Ok(result);
+        }
+        return BadRequest(result);
+    }
+
+    [HttpGet("GetSummaryStatisticalOfVehicles")]
+    public async Task<IActionResult> GetSummaryStatisticalOfVehicles()
+    {
+        var result = await _mediator.Send(new GetStatisticalSummaryOfVehiclesQuery());
+        if (result.IsSuccess)
+        {
+            return Ok(result);
+        }
+        return BadRequest(result);
+    }
+
+    [HttpPut("EditVehicle")]
+    public async Task<IActionResult> EditVehicle([FromBody] EditVehicleDto newData)
+    {
+        var result = await _mediator.Send(new EditVehicleCommand(newData));
         if (result.IsSuccess)
         {
             return Ok(result);

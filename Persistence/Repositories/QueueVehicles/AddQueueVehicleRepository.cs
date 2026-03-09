@@ -25,29 +25,12 @@ namespace Persistence.Repositories.QueueVehicles
             var person = await _context.People.FirstOrDefaultAsync(p => p.NumberIdentityDocument == dni);
             if (person == null) return Result<int>.Failure("Chofer no encontrado por DNI.");
 
-            // 2. Encuentra al Vehículo amarrado a esa Persona
             var vehicle = await _context.Vehicles.FirstOrDefaultAsync(v => v.IdPerson == person.IdPerson);
             if (vehicle == null) return Result<int>.Failure("Ese chofer no tiene un vehículo registrado.");
 
-            // 3. Verifica si la Ruta a la que se intenta agregar es válida
             var route = await _context.TravelRoutes.FindAsync(dto.IdTravelRoute);
             if (route == null) return Result<int>.Failure("La ruta de destino no existe.");
 
-            // 4. Validar si el vehículo ya está activo en la COLA
-            // CLEAN LOGIC: Solo bloqueamos si ya está esperando en una cola. 
-            // NO bloqueamos si está "En Ruta" (viaje activo), para permitir que se forme para su siguiente viaje.
-            var currentInQueue = await _context.AssignQueues
-                .Include(aq => aq.IdTravelRouteNavigation)
-                .AsNoTracking()
-                .FirstOrDefaultAsync(aq => aq.IdVehicle == vehicle.IdVehicle);
-
-            if (currentInQueue != null)
-            {
-                var routeName = currentInQueue.IdTravelRouteNavigation?.NameRoute ?? "otra ruta";
-                return Result<int>.Failure($"Este vehículo ya se encuentra esperando en la ruta {routeName}.");
-            }
-
-            // 5. Crea la instancia de la Cola (Generar el turno)
             var newTurn = 1;
             var lastQueuePushed = await _context.QueueVehicles.OrderByDescending(q => q.IdQueueVehicle).FirstOrDefaultAsync();
             if (lastQueuePushed != null) {
@@ -63,7 +46,6 @@ namespace Persistence.Repositories.QueueVehicles
             await _context.QueueVehicles.AddAsync(queueVehicle);
             await _context.SaveChangesAsync(); // Para conseguir el IdQueueVehicle
 
-            // 6. Crea la asociación entre el Turno Creado y el Carro + Ruta en RouteAssignment
             var assignQueue = new AssignQueue
             {
                 IdQueueVehicle = queueVehicle.IdQueueVehicle,
