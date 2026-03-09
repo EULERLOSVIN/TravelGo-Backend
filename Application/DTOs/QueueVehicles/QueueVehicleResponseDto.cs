@@ -17,5 +17,6 @@ namespace Application.DTOs.QueueVehicles
         public string ScheduledDepartureTime { get; set; } = string.Empty;
         public int RemainingMinutes { get; set; }
         public string Status { get; set; } = string.Empty; // "EN TURNO" / "EN COLA"
+        public bool IsArrival { get; set; }
     }
 }

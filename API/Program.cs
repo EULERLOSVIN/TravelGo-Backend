@@ -31,6 +31,10 @@ using Application.Interfaces.QueueVehicles;
 using Persistence.Repositories.QueueVehicles;
 using Application.Interfaces.DepartureTimes;
 using Persistence.Repositories.DepartureTimes;
+using Application.Interfaces.SecurityAlerts;
+using Persistence.Repositories.SecurityAlerts;
+using Application.Interfaces.Dashboard;
+using Persistence.Repositories.Dashboard;
 
  
 
@@ -108,11 +112,20 @@ builder.Services.AddScoped<IDeleteQueueVehicleRepository, DeleteQueueVehicleRepo
 builder.Services.AddScoped<IGetActiveQueueRepository, GetActiveQueueRepository>();
 builder.Services.AddScoped<IGetDriverQueueInfoRepository, GetDriverQueueInfoRepository>();
 builder.Services.AddScoped<IUpdateQueueVehicleRouteRepository, UpdateQueueVehicleRouteRepository>();
+builder.Services.AddScoped<IRegisterArrivalRepository, RegisterArrivalRepository>();
+builder.Services.AddScoped<IGetRoutesByHeadquarterRepository, GetRoutesByHeadquarterRepository>();
+builder.Services.AddScoped<IDispatchVehicleRepository, DispatchVehicleRepository>();
 
 // DEPARTURE TIMES
 builder.Services.AddScoped<IAddDepartureTimeRepository, AddDepartureTimeRepository>();
 builder.Services.AddScoped<IDeleteDepartureTimeRepository, DeleteDepartureTimeRepository>();
 builder.Services.AddScoped<IGetDepartureTimesByRouteRepository, GetDepartureTimesByRouteRepository>();
+
+// SECURITY ALERTS
+builder.Services.AddScoped<IGetSecurityAlertsRepository, GetSecurityAlertsRepository>();
+
+// DASHBOARD
+builder.Services.AddScoped<IDashboardRepository, DashboardRepository>();
 // 4. Conexión a SQL Server en AWS RDS
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
@@ -145,6 +158,43 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
+
+// 5. Seed database on startup
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    try
+    {
+        var context = services.GetRequiredService<ApplicationDbContext>();
+        if (!context.Companies.Any())
+        {
+            context.Companies.Add(new Persistence.Company
+            {
+                BusinessName = "TRAVEL GO",
+                Ruc = "20000000001",
+                Phone = "000-000000",
+                Email = "admin@travelgo.com",
+                FiscalAddress = "Fiscal Address 123",
+                RegistrationDate = DateTime.Now
+            });
+        }
+
+        if (!context.StateHeadquarters.Any())
+        {
+            context.StateHeadquarters.AddRange(
+                new Persistence.StateHeadquarter { Name = "Activa" },
+                new Persistence.StateHeadquarter { Name = "Inactiva" }
+            );
+        }
+        
+        context.SaveChanges();
+    }
+    catch (Exception ex)
+    {
+        var logger = services.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, "An error occurred while seeding the database.");
+    }
+}
 
 // 5. Configuración del Pipeline de HTTP
 if (app.Environment.IsDevelopment())

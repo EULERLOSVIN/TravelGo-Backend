@@ -1,4 +1,5 @@
 using Domain.Entities;
+using Application.Common;
 using Application.DTOs.QueueVehicles;
 using Application.Interfaces.QueueVehicles;
 using Microsoft.EntityFrameworkCore;
@@ -15,17 +16,20 @@ namespace Persistence.Repositories.QueueVehicles
             _context = context;
         }
 
-        public async Task<int> AddQueueVehicleAsync(AddQueueVehicleDto dto)
+        public async Task<Result<int>> AddQueueVehicleAsync(AddQueueVehicleDto dto)
         {
+            var dni = dto.DriverDni?.Trim();
+            if (string.IsNullOrWhiteSpace(dni)) return Result<int>.Failure("DNI no proporcionado.");
+
             // 1. Encuentra a la Persona por el string DriverDni proveído en el DTO
-            var person = await _context.People.FirstOrDefaultAsync(p => p.NumberIdentityDocument == dto.DriverDni);
-            if (person == null) throw new Exception("Chofer no encontrado por DNI.");
+            var person = await _context.People.FirstOrDefaultAsync(p => p.NumberIdentityDocument == dni);
+            if (person == null) return Result<int>.Failure("Chofer no encontrado por DNI.");
 
             var vehicle = await _context.Vehicles.FirstOrDefaultAsync(v => v.IdPerson == person.IdPerson);
-            if (vehicle == null) throw new Exception("Ese chofer no tiene un vehículo registrado.");
+            if (vehicle == null) return Result<int>.Failure("Ese chofer no tiene un vehículo registrado.");
 
             var route = await _context.TravelRoutes.FindAsync(dto.IdTravelRoute);
-            if (route == null) throw new Exception("La ruta de destino no existe.");
+            if (route == null) return Result<int>.Failure("La ruta de destino no existe.");
 
             var newTurn = 1;
             var lastQueuePushed = await _context.QueueVehicles.OrderByDescending(q => q.IdQueueVehicle).FirstOrDefaultAsync();
@@ -65,7 +69,7 @@ namespace Persistence.Repositories.QueueVehicles
             await _context.AssignQueues.AddAsync(assignQueue);
             await _context.SaveChangesAsync();
 
-            return queueVehicle.IdQueueVehicle;
+            return Result<int>.Success(queueVehicle.IdQueueVehicle);
         }
     }
 }

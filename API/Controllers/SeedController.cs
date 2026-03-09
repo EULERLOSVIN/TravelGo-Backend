@@ -23,9 +23,8 @@ namespace API.Controllers
             {
                 _context.Companies.Add(new Company
                 {
-                    BusinessName = "TravelGo Default Company",
+                    BusinessName = "TRAVEL GO",
                     Ruc = "20000000001",
-                    // Address property does not exist in Company entity
                     Phone = "000-000000",
                     Email = "admin@travelgo.com",
                     FiscalAddress = "Fiscal Address 123",

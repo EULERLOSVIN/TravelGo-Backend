@@ -26,12 +26,7 @@ namespace Application.Features.QueueVehicles.Queries.GetDriverQueueInfo
 
         public async Task<Result<DriverQueueInfoDto>> Handle(GetDriverQueueInfoQuery request, CancellationToken cancellationToken)
         {
-            var dto = await _repository.GetDriverQueueInfoAsync(request.Dni);
-
-            if (dto == null)
-                return Result<DriverQueueInfoDto>.Failure("Chofer no encontrado.");
-
-            return Result<DriverQueueInfoDto>.Success(dto);
+            return await _repository.GetDriverQueueInfoAsync(request.Dni);
         }
     }
 }

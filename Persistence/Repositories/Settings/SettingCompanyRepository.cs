@@ -20,7 +20,7 @@ namespace Persistence.Repositories.Settings
 
         public async Task<SettingCompany> GetCompanyAsync()
         {
-            var company = await _context.Companies.FirstOrDefaultAsync(c => c.IdCompany == 1);
+            var company = await _context.Companies.FirstOrDefaultAsync();
             if (company == null) return null;
 
             return new SettingCompany
@@ -37,6 +37,13 @@ namespace Persistence.Repositories.Settings
         public async Task<bool> UpdateCompanyAsync(SettingCompany dto)
         {
             var company = await _context.Companies.FirstOrDefaultAsync(c => c.IdCompany == dto.IdCompany);
+            
+            // Si el ID no coincide, intentar jalar el primero disponible (solo si hay uno solo)
+            if (company == null)
+            {
+                company = await _context.Companies.FirstOrDefaultAsync();
+            }
+
             if (company == null) return false;
 
             company.BusinessName = dto.BusinessName;

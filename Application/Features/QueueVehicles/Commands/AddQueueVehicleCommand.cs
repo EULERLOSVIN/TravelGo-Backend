@@ -18,8 +18,7 @@ namespace Application.Features.QueueVehicles.Commands
 
         public async Task<Result<int>> Handle(AddQueueVehicleCommand request, CancellationToken cancellationToken)
         {
-            var id = await _repository.AddQueueVehicleAsync(request.AddQueueVehicleDto);
-            return Result<int>.Success(id);
+            return await _repository.AddQueueVehicleAsync(request.AddQueueVehicleDto);
         }
     }
 }

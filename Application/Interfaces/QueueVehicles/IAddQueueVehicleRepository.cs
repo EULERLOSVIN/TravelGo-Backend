@@ -1,9 +1,10 @@
+using Application.Common;
 using Application.DTOs.QueueVehicles;
 
 namespace Application.Interfaces.QueueVehicles
 {
     public interface IAddQueueVehicleRepository
     {
-        Task<int> AddQueueVehicleAsync(AddQueueVehicleDto dto);
+        Task<Result<int>> AddQueueVehicleAsync(AddQueueVehicleDto dto);
     }
 }
