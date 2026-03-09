@@ -35,53 +35,7 @@ namespace Persistence.Repositories.Booking
                 _semaphore.Release();
             }
         }
-
-        //// REGISTRAR DATOS DEL PASAJERO
-        //public async Task<bool> UpdatePassengerDetails(int idSeatVehicle, string dni, string fullName, string pickUp)
-        //{
-        //    var seat = await _context.SeatVehicles.FirstOrDefaultAsync(s => s.IdSeatVehicle == idSeatVehicle);
-
-        //    if (seat != null && seat.StateSeat == true)
-        //    {
-        //        _context.SeatVehicles.Update(seat);
-        //        return await _context.SaveChangesAsync() > 0;
-        //    }
-        //    return false;
-        //}
-
-        //// CONFIRMAR PAGO
-        //public async Task<bool> ConfirmPayment(int idSeatVehicle)
-        //{
-        //    var seat = await _context.SeatVehicles.FirstOrDefaultAsync(s => s.IdSeatVehicle == idSeatVehicle);
-        //    if (seat == null) return false;
-
-        //    seat.StateSeat = false;
-        //    _context.SeatVehicles.Update(seat);
-        //    return await _context.SaveChangesAsync() > 0;
-        //}
-
-        //// LIBERAR ASIENTO
-        //public async Task<bool> ReleaseSeat(int idSeatVehicle)
-        //{
-        //    var seat = await _context.SeatVehicles.FirstOrDefaultAsync(s => s.IdSeatVehicle == idSeatVehicle);
-        //    if (seat == null) return false;
-
-        //    seat.StateSeat = false;
-        //    _context.SeatVehicles.Update(seat);
-        //    return await _context.SaveChangesAsync() > 0;
-        //}
-
-        //// CRONÓMETRO DE 10 MINUTOS
-        //public async Task ReleaseSeatIfPending(int idSeatVehicle)
-        //{
-        //    var seat = await _context.SeatVehicles.FindAsync(idSeatVehicle);
-        //    if (seat != null && seat.StateSeat == true)
-        //    {
-        //        seat.StateSeat = false;
-        //        await _context.SaveChangesAsync();
-        //    }
-        //}
-        
+       
         public async Task<bool> RegisterBooking(RegisterBookingDto dto)
         {
             await ValidatePaymentData(dto);        
@@ -144,7 +98,7 @@ namespace Persistence.Repositories.Booking
                         IdTicketState = 1,
                         IdVehicle = dto.IdVehicle,
                         SeatNumber = seat.IdSeatNavigation.Number,
-                        TravelDate = dto.TravelDate, // Asegúrate de que esto sea DateTime o DateOnly
+                        TravelDate = dto.TravelDate,
                         TicketCode = generatedCode
                     };
 

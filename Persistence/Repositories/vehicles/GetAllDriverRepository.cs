@@ -1,6 +1,3 @@
-using Domain.Entities;
-﻿
-
 using Application.DTOs.vehicles;
 using Application.Interfaces.vehicles;
 using Microsoft.EntityFrameworkCore;
@@ -19,9 +16,13 @@ namespace Persistence.Repositories.vehicles
         public async Task<List<PersonDto>> GetDriversAsync()
         {
             var personas = await _context.People
+                // 1. Filtro original: Solo conductores activos
                 .Where(p => p.Accounts.Any(a =>
                     a.IdRoleNavigation.IdRole == 3 &&
                     a.IdStateAccount == 1))
+
+                .Where(p => !_context.Vehicles.Any(v => v.IdPerson == p.IdPerson))
+
                 .Select(p => new PersonDto
                 {
                     IdPerson = p.IdPerson,
